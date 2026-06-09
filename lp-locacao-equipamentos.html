@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Workin ERP controla seus contratos de locação, avisa no vencimento e ainda cobra automaticamente via boleto ou PIX. Do contrato ao pagamento, sem trabalho manual." />
+  <title>Gestão de Contratos + Cobrança Automática para Locadoras — Workin ERP</title>
+
+  <!-- Open Graph (Meta Ads) -->
+  <meta property="og:title" content="Sua locadora ainda controla contratos no Excel?" />
+  <meta property="og:description" content="Workin avisa no vencimento e cobra automaticamente. Do contrato ao pagamento, sem trabalho manual." />
+  <meta property="og:image" content="https://sistemaworkin.com.br/og-locacao.jpg" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #fff; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── VARIÁVEIS ─── */
+    :root {
+      --verde: #00AD50;
+      --verde-escuro: #008a3f;
+      --azul: #22253A;
+      --cinza-claro: #f5f5f5;
+      --cinza-texto: #555;
+      --branco: #ffffff;
+      --max-w: 860px;
+    }
+
+    /* ─── UTILITÁRIOS ─── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+    .btn {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .btn:hover { background: var(--verde-escuro); }
+    .btn-lg { font-size: 1.15rem; padding: 20px 48px; }
+    .destaque { color: var(--verde); }
+    .tag {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--branco);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 3px solid var(--verde);
+    }
+    header img { height: 70px; margin: 0 auto; }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 64px 20px 72px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.65rem, 4vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.22;
+      margin-bottom: 20px;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.18rem);
+      color: #c8ccd8;
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,173,80,0.15);
+      border: 1px solid rgba(0,173,80,0.4);
+      color: #6de0a0;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* ─── PROBLEMA ─── */
+    .problema {
+      background: var(--cinza-claro);
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .problema h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .problema .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 40px;
+      font-size: 1rem;
+    }
+    .dores {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .dor-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--branco);
+      padding: 18px 20px;
+      border-radius: 8px;
+      border-left: 4px solid var(--verde);
+    }
+    .dor-item .icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .dor-item p { font-size: 1rem; color: var(--azul); font-weight: 500; line-height: 1.4; }
+
+    /* ─── SOLUÇÃO ─── */
+    .solucao { padding: 64px 20px; text-align: center; }
+    .solucao h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .solucao .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 40px;
+    }
+    .modulos {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .modulo-card {
+      border: 2px solid var(--verde);
+      border-radius: 10px;
+      padding: 28px 24px;
+    }
+    .modulo-card h3 {
+      font-size: 1.15rem;
+      color: var(--azul);
+      margin-bottom: 14px;
+    }
+    .modulo-card ul { list-style: none; padding: 0; }
+    .modulo-card ul li {
+      padding: 7px 0;
+      padding-left: 26px;
+      position: relative;
+      color: var(--cinza-texto);
+      font-size: 0.97rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .modulo-card ul li:last-child { border-bottom: none; }
+    .modulo-card ul li::before {
+      content: '✓';
+      color: var(--verde);
+      font-weight: 800;
+      position: absolute;
+      left: 0;
+    }
+
+    /* ─── FLUXO ─── */
+    .fluxo {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 56px 20px;
+      text-align: center;
+    }
+    .fluxo h2 {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      margin-bottom: 36px;
+    }
+    .fluxo-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .fluxo-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    .fluxo-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(0,173,80,0.3);
+    }
+    .fluxo-step:last-child { padding-bottom: 0; }
+    .step-num {
+      background: var(--verde);
+      color: var(--branco);
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .step-text strong { display: block; font-size: 1rem; margin-bottom: 3px; }
+    .step-text span { font-size: 0.9rem; color: #aab0c0; line-height: 1.5; }
+
+    /* ─── VÍDEO ─── */
+    .video-section {
+      padding: 64px 20px;
+      text-align: center;
+      background: var(--branco);
+    }
+    .video-section h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .video-section .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 32px;
+    }
+    .video-wrapper {
+      position: relative;
+      max-width: 780px;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: block;
+    }
+    .video-wrapper img {
+      width: 100%;
+      display: block;
+    }
+    .video-play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .video-wrapper:hover .video-play-btn {
+      background: var(--verde);
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+    .video-play-btn svg { margin-left: 5px; }
+
+    /* ─── FORMULÁRIO ─── */
+    .formulario {
+      background: var(--cinza-claro);
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .formulario h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .formulario .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 32px;
+    }
+    .form-box {
+      background: var(--branco);
+      border-radius: 10px;
+      padding: 36px 28px;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.09);
+    }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      color: #1a1a1a;
+    }
+    .form-group input:focus { outline: none; border-color: var(--verde); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-legal { font-size: 0.78rem; color: #999; margin-top: 12px; line-height: 1.4; }
+    #msg-erro { color: #d32f2f; font-size: 0.88rem; margin-top: 10px; display: none; }
+    #msg-sucesso { color: var(--verde-escuro); font-size: 0.95rem; margin-top: 10px; display: none; font-weight: 600; }
+    .btn-submit { margin-top: 20px; width: 100%; font-size: 1.05rem; padding: 17px; }
+
+    /* ─── BANCOS ─── */
+    .bancos {
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid #eee;
+    }
+    .bancos p {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .bancos-lista {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .banco-tag {
+      background: var(--cinza-claro);
+      color: var(--azul);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* ─── PROVA ─── */
+    .prova { padding: 64px 20px; text-align: center; }
+    .prova h2 { font-size: 1.5rem; color: var(--azul); margin-bottom: 32px; }
+    .depoimento {
+      background: var(--cinza-claro);
+      border-left: 4px solid var(--verde);
+      border-radius: 8px;
+      padding: 28px 24px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .depoimento blockquote {
+      font-size: 1.05rem;
+      color: var(--azul);
+      font-style: italic;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .depoimento cite { font-size: 0.88rem; color: var(--cinza-texto); font-style: normal; font-weight: 600; }
+
+    /* ─── FAQ ─── */
+    .faq { background: var(--cinza-claro); padding: 64px 20px; }
+    .faq h2 { font-size: 1.5rem; color: var(--azul); text-align: center; margin-bottom: 32px; }
+    .faq-lista { max-width: 680px; margin: 0 auto; }
+    details { background: var(--branco); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary {
+      padding: 18px 20px;
+      font-weight: 600;
+      color: var(--azul);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.97rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--verde); flex-shrink: 0; margin-left: 12px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 20px 18px; color: var(--cinza-texto); font-size: 0.95rem; line-height: 1.6; }
+
+    /* ─── CTA FINAL ─── */
+    .cta-final { background: var(--verde); color: var(--branco); padding: 64px 20px; text-align: center; }
+    .cta-final h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: 12px; }
+    .cta-final p { font-size: 1.05rem; margin-bottom: 28px; opacity: 0.9; }
+    .btn-branco { background: var(--branco); color: var(--verde-escuro); }
+    .btn-branco:hover { background: #f0f0f0; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--azul);
+      color: #7a7f95;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+    footer a { color: #7a7f95; text-decoration: underline; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.5rem; }
+      .btn-lg { width: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <img src="logo-workin.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">⚡ Para locadoras de equipamentos, containers e veículos</div>
+    <h1>Quantos contratos você perdeu por falta de aviso de vencimento?</h1>
+    <p>O Workin controla seus contratos, avisa antes do vencimento e ainda cobra o cliente automaticamente — do contrato ao pagamento, sem trabalho manual.</p>
+    <a href="#formulario" class="btn btn-lg">Quero ver como funciona</a>
+  </div>
+</section>
+
+<!-- VÍDEO -->
+<section class="video-section">
+  <div class="container">
+    <h2>Veja o módulo de Gestão de Contratos funcionando</h2>
+    <p class="subtitulo">Em menos de 2 minutos você entende como o Workin elimina o trabalho manual da sua locadora.</p>
+    <!-- EMBED: funciona em servidor com https:// — localmente exibe thumbnail -->
+    <div class="video-wrapper" id="video-container">
+      <a href="https://youtu.be/ppCFNUjilak" target="_blank" rel="noopener" id="video-fallback" style="display:block;position:relative;">
+        <img src="https://img.youtube.com/vi/ppCFNUjilak/maxresdefault.jpg" alt="Workin ERP — Gestão de Contratos de Locação" />
+        <div class="video-play-btn">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </a>
+    </div>
+    <script>
+      (function () {
+        if (location.protocol === 'https:' || location.hostname === 'localhost') {
+          var c = document.getElementById('video-container');
+          c.innerHTML = '<iframe src="https://www.youtube.com/embed/ppCFNUjilak" title="Workin ERP — Gestão de Contratos de Locação" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
+          c.style.paddingBottom = '56.25%';
+          c.style.height = '0';
+          c.style.position = 'relative';
+        }
+      })();
+    </script>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <h2>Sua locadora ainda opera assim?</h2>
+    <p class="subtitulo">Se você se identificar com algum item abaixo, o Workin foi feito para você.</p>
+    <div class="dores">
+      <div class="dor-item">
+        <span class="icon">📋</span>
+        <p>Controla contratos no Excel ou no papel — e às vezes só percebe o vencimento depois que o cliente já ficou inadimplente</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">😓</span>
+        <p>Emite boleto um por um todo mês, manualmente, para cada cliente — o que toma horas e ainda gera erro</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">💸</span>
+        <p>Não tem como acompanhar quem pagou, quem está em atraso e quem precisa de cobrança — tudo na memória ou no caderno</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="solucao">
+  <div class="container">
+    <h2>A solução completa para locadoras</h2>
+    <p class="subtitulo">Dois módulos que trabalham juntos para eliminar o trabalho manual do início ao fim.</p>
+    <div class="modulos">
+
+      <div class="modulo-card">
+        <span class="tag">Módulo 1</span>
+        <h3>Gestão de Contratos — controle total do que você aluga</h3>
+        <ul>
+          <li>Cadastro completo de contratos com datas, equipamentos e valores</li>
+          <li>Alertas automáticos de vencimento — você é avisado antes, não depois</li>
+          <li>Emissão de NF-e direto do contrato, sem digitar nada manualmente</li>
+          <li>Histórico completo de cada cliente e equipamento locado</li>
+          <li>Controle de renovações e rescisões com registro em sistema</li>
+        </ul>
+      </div>
+
+      <div class="modulo-card">
+        <span class="tag">Módulo 2</span>
+        <h3>Bolepix — cobrança automática via boleto e PIX</h3>
+        <ul>
+          <li>Geração e envio automático de boleto quando o contrato vence</li>
+          <li>PIX Cobrança integrado — cliente paga como preferir</li>
+          <li>Conciliação automática: banco liquida o boleto e o sistema baixa o contas a receber</li>
+          <li>Integração com 7 bancos via API: BB, Bradesco, Caixa, Itaú, Santander, Sicredi e Sicoob</li>
+          <li>Importação de extrato OFX para conciliação bancária completa</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BANCOS -->
+<section class="bancos">
+  <div class="container">
+    <p>Bancos integrados via API</p>
+    <div class="bancos-lista">
+      <span class="banco-tag">Banco do Brasil</span>
+      <span class="banco-tag">Bradesco</span>
+      <span class="banco-tag">Caixa</span>
+      <span class="banco-tag">Itaú</span>
+      <span class="banco-tag">Santander</span>
+      <span class="banco-tag">Sicredi</span>
+      <span class="banco-tag">Sicoob</span>
+    </div>
+  </div>
+</section>
+
+<!-- FLUXO -->
+<section class="fluxo">
+  <div class="container">
+    <h2>Como funciona na prática — do contrato ao pagamento</h2>
+    <div class="fluxo-steps">
+      <div class="fluxo-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Contrato cadastrado no Workin</strong>
+          <span>Datas, equipamentos, valores e condições registrados em sistema — nada mais no papel.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Sistema avisa você antes do vencimento</strong>
+          <span>Alerta automático: você sabe quem vai vencer antes que vire inadimplência.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Boleto ou PIX gerado e enviado automaticamente</strong>
+          <span>O Bolepix emite e manda a cobrança para o cliente sem você precisar fazer nada.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Pagamento confirmado — sistema baixa automaticamente</strong>
+          <span>Conciliação bancária automática via retorno do banco. Contas a receber atualizado sem trabalho manual.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="formulario">
+  <div class="container">
+    <h2>Veja o Workin funcionando na sua locadora</h2>
+    <p class="subtitulo">Preencha abaixo e nossa equipe entra em contato para mostrar como funciona no seu tipo de negócio.</p>
+    <div class="form-box">
+      <form id="lead-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Nome *</label>
+            <input type="text" id="firstName" name="firstName" placeholder="João" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Sobrenome *</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Silva" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro">Por favor, preencha todos os campos corretamente.</div>
+        <div id="msg-sucesso">Recebido! Nossa equipe vai entrar em contato em breve.</div>
+        <button type="submit" class="btn btn-submit">Quero ver uma demonstração →</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados. Sem spam.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="prova">
+  <div class="container">
+    <h2>Quem já usa, não abre mão</h2>
+    <div class="depoimento">
+      <blockquote>
+        "Antes eu passava horas toda virada do mês emitindo boleto um por um. Hoje o Workin faz tudo automaticamente. Minha inadimplência caiu porque o sistema manda a cobrança na hora certa, sem eu precisar lembrar."
+      </blockquote>
+      <cite>⭐⭐⭐⭐⭐ — Cliente Workin · Locadora de equipamentos</cite>
+      <br/><br/>
+      <small style="color:#bbb;font-size:0.78rem;font-style:italic;">* Depoimento a ser substituído por cliente real. Coletar via formulário ou WhatsApp.</small>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-lista">
+
+      <details>
+        <summary>Preciso trocar de banco para usar o Bolepix?</summary>
+        <p>Não. O Bolepix funciona com os principais bancos do Brasil: Banco do Brasil, Bradesco, Caixa, Itaú, Santander, Sicredi e Sicoob. Se você já tem conta em um deles, basta ativar o módulo. Dica: Sicredi e Sicoob não cobram por recebimento PIX em conta PJ — são os mais indicados para reduzir custos.</p>
+      </details>
+
+      <details>
+        <summary>Quanto tempo leva para implantar o sistema na minha locadora?</summary>
+        <p>A implantação do Workin é rápida — normalmente entre 1 e 3 dias úteis dependendo da quantidade de contratos a migrar. Nosso time faz o treinamento e acompanha a equipe até todo mundo estar operando com confiança.</p>
+      </details>
+
+      <details>
+        <summary>O sistema funciona para locação de qualquer tipo de equipamento?</summary>
+        <p>Sim. O módulo de Gestão de Contratos foi pensado para locadoras de equipamentos em geral: geradores, andaimes, ferramentas, containers, veículos, equipamentos médicos e outros. O cadastro é flexível e se adapta ao seu tipo de produto.</p>
+      </details>
+
+      <details>
+        <summary>O sistema envia o boleto automaticamente para todos os clientes?</summary>
+        <p>Sim. O Workin gera e envia o boleto automaticamente quando o contrato vence — sem você precisar fazer nada manualmente. Se o cliente não pagar, você tem visão clara de quem está em atraso e pode reenviar a cobrança pelo WhatsApp direto do sistema, com um clique.</p>
+      </details>
+
+      <details>
+        <summary>Preciso de conhecimento técnico para operar o Workin?</summary>
+        <p>Não. O Workin foi desenvolvido para que qualquer pessoa da equipe consiga operar — sem precisar entender de fiscal, tributação ou tecnologia. Nosso suporte é feito por pessoas reais que conhecem o seu tipo de negócio, não por chatbot.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <h2>Chega de controlar contratos no papel e emitir boleto manualmente</h2>
+    <p>Veja como o Workin transforma a operação da sua locadora em menos de 30 minutos.</p>
+    <a href="#formulario" class="btn btn-lg btn-branco">Quero ver uma demonstração</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+    <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+    <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+    <p>
+      <a href="/politica-de-privacidade.html">Política de Privacidade</a> ·
+      <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ─── CONFIGURAÇÃO ─── */
+  const CONFIG = {
+    WEBHOOK_URL: '{{WEBHOOK_URL}}',           // ← inserir URL gerada no WeSales
+    REDIRECT_URL: '/obrigado-locacao.html',
+    UTM_CAMPAIGN_DEFAULT: 'locacao-equipamentos',
+  };
+
+  /* ─── CAPTURA UTMs da URL ─── */
+  function capturaUTMs() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   params.get('utm_source')   || 'direto',
+      utm_medium:   params.get('utm_medium')   || 'organico',
+      utm_campaign: params.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  params.get('utm_content')  || '',
+      utm_term:     params.get('utm_term')     || '',
+    };
+  }
+
+  /* ─── MÁSCARA DE TELEFONE ─── */
+  const phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) {
+      v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else {
+      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    }
+    this.value = v;
+  });
+
+  /* ─── VALIDAÇÃO ─── */
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!dados.lastName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  /* ─── ENVIO ─── */
+  document.getElementById('lead-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const msgErro   = document.getElementById('msg-erro');
+    const msgOk     = document.getElementById('msg-sucesso');
+
+    const utms = capturaUTMs();
+    const dados = {
+      firstName:    document.getElementById('firstName').value.trim(),
+      lastName:     document.getElementById('lastName').value.trim(),
+      email:        document.getElementById('email').value.trim().toLowerCase(),
+      phone:        document.getElementById('phone').value.replace(/\D/g, ''),
+      ...utms,
+    };
+
+    msgErro.style.display = 'none';
+    msgOk.style.display   = 'none';
+
+    if (!valida(dados)) {
+      msgErro.style.display = 'block';
+      return;
+    }
+
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando...';
+
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(dados),
+      });
+      window.location.href = CONFIG.REDIRECT_URL;
+    } catch (err) {
+      msgOk.style.display   = 'block';
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Quero ver uma demonstração →';
+    }
+  });
+</script>
+
+</body>
+</html>

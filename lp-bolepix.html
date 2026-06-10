@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Workin BolePix emite boleto e PIX automaticamente, cobra seus clientes no dia seguinte ao vencimento e confirma o pagamento sem você fazer nada. Liquidação no mesmo dia." />
+  <title>Cobrança Automática com BolePix — Workin ERP</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Open Graph (Meta Ads) -->
+  <meta property="og:title" content="Seu dinheiro ainda demora 3 dias para cair?" />
+  <meta property="og:description" content="O BolePix do Workin emite, envia e concilia automaticamente. Liquidação no mesmo dia, 24x7." />
+  <meta property="og:image" content="https://sistemaworkin.com.br/og-bolepix.jpg" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #fff; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── VARIÁVEIS ─── */
+    :root {
+      --verde: #00AD50;
+      --verde-escuro: #008a3f;
+      --azul: #22253A;
+      --cinza-claro: #f5f5f5;
+      --cinza-texto: #555;
+      --branco: #ffffff;
+      --max-w: 860px;
+    }
+
+    /* ─── UTILITÁRIOS ─── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+    .btn {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .btn:hover { background: var(--verde-escuro); }
+    .btn-lg { font-size: 1.15rem; padding: 20px 48px; }
+    .tag {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--branco);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 3px solid var(--verde);
+    }
+    header img { height: 70px; margin: 0 auto; }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 64px 20px 72px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.65rem, 4vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.22;
+      margin-bottom: 20px;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.18rem);
+      color: #c8ccd8;
+      max-width: 640px;
+      margin: 0 auto 36px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,173,80,0.15);
+      border: 1px solid rgba(0,173,80,0.4);
+      color: #6de0a0;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* ─── NÚMEROS ─── */
+    .numeros {
+      background: var(--verde);
+      color: var(--branco);
+      padding: 36px 20px;
+    }
+    .numeros-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      text-align: center;
+    }
+    .numero-item {
+      padding: 12px 10px;
+      border-right: 1px solid rgba(255,255,255,0.25);
+    }
+    .numero-item:last-child { border-right: none; }
+    .numero-item .valor {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1;
+      display: block;
+    }
+    .numero-item .label {
+      font-size: 0.8rem;
+      opacity: 0.85;
+      margin-top: 5px;
+      line-height: 1.3;
+    }
+
+    /* ─── PROBLEMA ─── */
+    .problema {
+      background: var(--cinza-claro);
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .problema h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .problema .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 40px;
+      font-size: 1rem;
+    }
+    .dores {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .dor-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--branco);
+      padding: 18px 20px;
+      border-radius: 8px;
+      border-left: 4px solid var(--verde);
+    }
+    .dor-item .icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .dor-item p { font-size: 1rem; color: var(--azul); font-weight: 500; line-height: 1.4; }
+
+    /* ─── SOLUÇÃO ─── */
+    .solucao { padding: 64px 20px; text-align: center; }
+    .solucao h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .solucao .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 40px;
+    }
+    .beneficios {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .beneficio-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 22px 20px;
+      transition: border-color 0.2s;
+    }
+    .beneficio-card:hover { border-color: var(--verde); }
+    .beneficio-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .beneficio-card h3 {
+      font-size: 1rem;
+      color: var(--azul);
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .beneficio-card p {
+      font-size: 0.92rem;
+      color: var(--cinza-texto);
+      line-height: 1.55;
+    }
+
+    /* ─── PARCERIA SHIPAY ─── */
+    .parceria {
+      background: var(--azul);
+      padding: 48px 20px;
+    }
+    .parceria-box {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .parceria-badge {
+      flex-shrink: 0;
+      background: rgba(0,173,80,0.12);
+      border: 2px solid rgba(0,173,80,0.35);
+      border-radius: 12px;
+      padding: 20px 28px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .parceria-badge .nome {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #6de0a0;
+      letter-spacing: -0.5px;
+      display: block;
+    }
+    .parceria-badge .rotulo {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-top: 4px;
+    }
+    .parceria-texto { color: var(--branco); }
+    .parceria-texto h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .parceria-texto p {
+      font-size: 0.92rem;
+      color: #9aa0b8;
+      line-height: 1.6;
+    }
+    .parceria-texto p strong { color: #6de0a0; }
+    @media (max-width: 580px) {
+      .parceria-box { flex-direction: column; gap: 20px; text-align: center; }
+    }
+
+    /* ─── BANCOS ─── */
+    .bancos {
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+    .bancos p {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .bancos-lista {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .banco-tag {
+      background: var(--cinza-claro);
+      color: var(--azul);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* ─── FLUXO ─── */
+    .fluxo {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 56px 20px;
+      text-align: center;
+    }
+    .fluxo h2 {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      margin-bottom: 36px;
+    }
+    .fluxo-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .fluxo-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    .fluxo-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(0,173,80,0.3);
+    }
+    .fluxo-step:last-child { padding-bottom: 0; }
+    .step-num {
+      background: var(--verde);
+      color: var(--branco);
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .step-text strong { display: block; font-size: 1rem; margin-bottom: 3px; }
+    .step-text span { font-size: 0.9rem; color: #aab0c0; line-height: 1.5; }
+
+    /* ─── FORMULÁRIO ─── */
+    .formulario {
+      background: var(--cinza-claro);
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .formulario h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .formulario .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 32px;
+    }
+    .form-box {
+      background: var(--branco);
+      border-radius: 10px;
+      padding: 36px 28px;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.09);
+    }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      color: #1a1a1a;
+    }
+    .form-group input:focus { outline: none; border-color: var(--verde); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-legal { font-size: 0.78rem; color: #999; margin-top: 12px; line-height: 1.4; }
+    #msg-erro { color: #d32f2f; font-size: 0.88rem; margin-top: 10px; display: none; }
+    #msg-sucesso { color: var(--verde-escuro); font-size: 0.95rem; margin-top: 10px; display: none; font-weight: 600; }
+    .btn-submit { margin-top: 20px; width: 100%; font-size: 1.05rem; padding: 17px; }
+
+    /* ─── PROVA SOCIAL ─── */
+    .prova { padding: 64px 20px; text-align: center; }
+    .prova h2 { font-size: 1.5rem; color: var(--azul); margin-bottom: 32px; }
+    .depoimento {
+      background: var(--cinza-claro);
+      border-left: 4px solid var(--verde);
+      border-radius: 8px;
+      padding: 28px 24px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .depoimento blockquote {
+      font-size: 1.05rem;
+      color: var(--azul);
+      font-style: italic;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .depoimento cite { font-size: 0.88rem; color: var(--cinza-texto); font-style: normal; font-weight: 600; }
+
+    /* ─── FAQ ─── */
+    .faq { background: var(--cinza-claro); padding: 64px 20px; }
+    .faq h2 { font-size: 1.5rem; color: var(--azul); text-align: center; margin-bottom: 32px; }
+    .faq-lista { max-width: 680px; margin: 0 auto; }
+    details { background: var(--branco); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary {
+      padding: 18px 20px;
+      font-weight: 600;
+      color: var(--azul);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.97rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--verde); flex-shrink: 0; margin-left: 12px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 20px 18px; color: var(--cinza-texto); font-size: 0.95rem; line-height: 1.6; }
+
+    /* ─── CTA FINAL ─── */
+    .cta-final { background: var(--verde); color: var(--branco); padding: 64px 20px; text-align: center; }
+    .cta-final h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: 12px; }
+    .cta-final p { font-size: 1.05rem; margin-bottom: 28px; opacity: 0.9; }
+    .btn-branco { background: var(--branco); color: var(--verde-escuro); }
+    .btn-branco:hover { background: #f0f0f0; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--azul);
+      color: #7a7f95;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+    footer a { color: #7a7f95; text-decoration: underline; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 600px) {
+      .numeros-grid { grid-template-columns: repeat(2, 1fr); }
+      .numero-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 16px 10px; }
+      .numero-item:nth-child(1), .numero-item:nth-child(2) { border-right: none; }
+      .numero-item:nth-child(3), .numero-item:nth-child(4) { border-bottom: none; }
+    }
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.5rem; }
+      .btn-lg { width: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <img src="logo-workin.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">💳 Para empresas que vendem, prestam serviços e precisam cobrar com eficiência</div>
+    <h1>Seu dinheiro ainda demora 3 dias para cair depois do pagamento?</h1>
+    <p>Com o BolePix do Workin, você emite boleto e PIX em segundos, cobra automaticamente no dia seguinte ao vencimento e recebe no mesmo dia — 24 horas, 7 dias por semana.</p>
+    <a href="#formulario" class="btn btn-lg">Quero cobrar no automático</a>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section class="numeros">
+  <div class="container">
+    <div class="numeros-grid">
+      <div class="numero-item">
+        <span class="valor">80%</span>
+        <span class="label">menos custo vs. boleto tradicional</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">D+0</span>
+        <span class="label">liquidação no mesmo dia, 24x7</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">7</span>
+        <span class="label">bancos integrados via API</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">100%</span>
+        <span class="label">integrado ao Workin ERP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <h2>Reconhece algum desses problemas?</h2>
+    <p class="subtitulo">Se você se identificar com pelo menos um, o BolePix resolve.</p>
+    <div class="dores">
+      <div class="dor-item">
+        <span class="icon">😓</span>
+        <p>Emite boleto manualmente um a um — gasta horas toda virada de mês e ainda corre risco de erro de valor ou vencimento</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">⏳</span>
+        <p>O boleto pago pelo cliente demora D+3 para aparecer na conta — você não sabe se o dinheiro caiu e ainda precisa fazer a baixa manual no sistema</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">💸</span>
+        <p>Paga tarifa cara por boleto bancário e não tem visão clara de quem pagou, quem está em atraso e quem precisa de recobrança</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="solucao">
+  <div class="container">
+    <span class="tag">Módulo BolePix</span>
+    <h2>Cobrança automática do jeito que seu financeiro precisa</h2>
+    <p class="subtitulo">Integrado à Shipay — hub de pagamentos com PIX, boleto e carteiras digitais num único sistema.</p>
+    <div class="beneficios">
+
+      <div class="beneficio-card">
+        <div class="beneficio-icon">⚡</div>
+        <div>
+          <h3>Geração e envio automático de boleto e PIX</h3>
+          <p>Cobranças geradas com um clique e enviadas automaticamente por e-mail, WhatsApp e PDF — sem você abrir o internet banking ou digitar nada manualmente.</p>
+        </div>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icon">🕐</div>
+        <div>
+          <h3>Liquidação no mesmo dia — 24x7</h3>
+          <p>Diferente do boleto bancário tradicional (D+3), o BolePix via Shipay confirma e liquida o pagamento no mesmo dia, qualquer dia da semana, incluindo fins de semana e feriados.</p>
+        </div>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icon">🔄</div>
+        <div>
+          <h3>Conciliação bancária automática</h3>
+          <p>Quando o cliente paga, o Workin baixa o contas a receber automaticamente. Importação de extrato OFX para conciliação completa. Chega de baixa manual.</p>
+        </div>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📲</div>
+        <div>
+          <h3>Recobrança automática a partir do D+1</h3>
+          <p>Venceu e o cliente não pagou? O sistema inicia a recobrança automaticamente no dia seguinte — por e-mail ou nova via de boleto. Sem você ligar ou cobrar manualmente.</p>
+        </div>
+      </div>
+
+      <div class="beneficio-card">
+        <div class="beneficio-icon">💳</div>
+        <div>
+          <h3>PIX, boleto e carteiras digitais num único lugar</h3>
+          <p>Seu cliente escolhe como quer pagar. Você recebe tudo no mesmo sistema, com o mesmo fluxo de conciliação — integrado 100% ao Workin ERP.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PARCERIA SHIPAY -->
+<section class="parceria">
+  <div class="container">
+    <div class="parceria-box">
+      <div class="parceria-badge">
+        <span class="nome">Shipay</span>
+        <span class="rotulo">parceiro oficial</span>
+      </div>
+      <div class="parceria-texto">
+        <h3>Por que o BolePix do Workin liquida no mesmo dia?</h3>
+        <p>
+          O Workin é <strong>parceiro oficial da Shipay</strong>, fintech brasileira líder em pagamentos digitais para ERPs.
+          A Shipay centraliza PIX, boleto e mais de 20 carteiras digitais num único hub — e o Workin integra 100% dessa tecnologia
+          direto no seu financeiro. É por isso que você tem <strong>liquidação D+0, 24x7</strong>, conciliação automática e
+          até <strong>80% de redução de custo</strong> sem contratar nenhum serviço separado.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANCOS -->
+<section class="bancos">
+  <div class="container">
+    <p>Bancos integrados via API</p>
+    <div class="bancos-lista">
+      <span class="banco-tag">Banco do Brasil</span>
+      <span class="banco-tag">Bradesco</span>
+      <span class="banco-tag">Caixa</span>
+      <span class="banco-tag">Itaú</span>
+      <span class="banco-tag">Santander</span>
+      <span class="banco-tag">Sicredi</span>
+      <span class="banco-tag">Sicoob</span>
+    </div>
+  </div>
+</section>
+
+<!-- FLUXO -->
+<section class="fluxo">
+  <div class="container">
+    <h2>Como funciona na prática</h2>
+    <div class="fluxo-steps">
+      <div class="fluxo-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Cobrança criada no Workin</strong>
+          <span>Você cadastra o cliente e o valor uma vez. O Workin cuida de todo o resto — boleto, PIX e recobrança.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Boleto e QR Code PIX gerados e enviados automaticamente</strong>
+          <span>Envio por e-mail, WhatsApp ou PDF sem você abrir o banco ou digitar nada.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Cliente paga — você recebe no mesmo dia</strong>
+          <span>Liquidação D+0, 24x7 via Shipay. Sem esperar D+3 do boleto tradicional.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Sistema baixa o contas a receber automaticamente</strong>
+          <span>Conciliação feita pelo Workin. Financeiro atualizado, sem trabalho manual.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="formulario">
+  <div class="container">
+    <h2>Veja o BolePix funcionando na sua empresa</h2>
+    <p class="subtitulo">Preencha abaixo e nossa equipe mostra como automatizar sua cobrança em menos de 30 minutos.</p>
+    <div class="form-box">
+      <form id="lead-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Nome *</label>
+            <input type="text" id="firstName" name="firstName" placeholder="João" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Sobrenome *</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Silva" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro">Por favor, preencha todos os campos corretamente.</div>
+        <div id="msg-sucesso">Recebido! Nossa equipe vai entrar em contato em breve.</div>
+        <button type="submit" class="btn btn-submit">Quero cobrar no automático →</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados. Sem spam.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="prova">
+  <div class="container">
+    <h2>Quem já usa, não abre mão</h2>
+    <div class="depoimento">
+      <blockquote>
+        "Antes eu gastava um dia inteiro emitindo boleto para todos os clientes. Hoje o Workin faz isso em segundos. E o melhor: quando o cliente paga, o sistema já baixa automaticamente — eu nem preciso mais entrar no banco."
+      </blockquote>
+      <cite>⭐⭐⭐⭐⭐ — Cliente Workin · Empresa de serviços recorrentes</cite>
+      <br/><br/>
+      <small style="color:#bbb;font-size:0.78rem;font-style:italic;">* Substituir por depoimento real quando disponível.</small>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-lista">
+
+      <details>
+        <summary>BolePix é o mesmo que PIX? Qual a diferença?</summary>
+        <p>Não. O BolePix é um formato híbrido: o boleto tem um QR Code PIX embutido, então o cliente pode pagar escaneando o QR Code (como PIX) ou pelo código de barras (como boleto tradicional). Isso aumenta a taxa de pagamento porque o cliente escolhe como prefere — e você recebe de qualquer jeito, com liquidação no mesmo dia.</p>
+      </details>
+
+      <details>
+        <summary>Preciso trocar de banco para usar o BolePix?</summary>
+        <p>Não. O BolePix funciona com os principais bancos do Brasil: Banco do Brasil, Bradesco, Caixa, Itaú, Santander, Sicredi e Sicoob. Se você já tem conta em um deles, basta ativar o módulo. Para quem quer reduzir ainda mais o custo: Sicredi e Sicoob costumam ter as melhores tarifas para recebimento PIX em conta PJ.</p>
+      </details>
+
+      <details>
+        <summary>Como funciona a conciliação automática?</summary>
+        <p>Quando o cliente paga, a Shipay confirma o pagamento em tempo real e o Workin já baixa o contas a receber automaticamente. Você também pode importar o extrato OFX direto do banco para uma conciliação bancária completa — sem planilha, sem trabalho manual.</p>
+      </details>
+
+      <details>
+        <summary>Funciona para cobrança recorrente (mensalidade)?</summary>
+        <p>Sim. O BolePix é ideal para empresas que cobram mensalmente — prestadores de serviço, clínicas, academias, escolas e outros. O sistema gera e envia a cobrança automaticamente no vencimento, todo mês, sem você precisar fazer nada.</p>
+      </details>
+
+      <details>
+        <summary>Quanto tempo leva para implantar o BolePix?</summary>
+        <p>A implantação é rápida — normalmente 1 a 2 dias úteis. Nossa equipe faz o treinamento e acompanha você até o módulo estar funcionando com confiança. Suporte por pessoas reais, sem chatbot.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <h2>Chega de boleto manual e D+3</h2>
+    <p>Automatize sua cobrança hoje e receba no mesmo dia do pagamento.</p>
+    <a href="#formulario" class="btn btn-lg btn-branco">Quero ver o BolePix funcionando</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+    <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+    <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+    <p>
+      <a href="/politica-de-privacidade.html">Política de Privacidade</a> ·
+      <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ─── CONFIGURAÇÃO ─── */
+  const CONFIG = {
+    WEBHOOK_URL: '{{WEBHOOK_URL}}',
+    REDIRECT_URL: '/obrigado-bolepix.html',
+    UTM_CAMPAIGN_DEFAULT: 'bolepix',
+  };
+
+  /* ─── CAPTURA UTMs da URL ─── */
+  function capturaUTMs() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   params.get('utm_source')   || 'direto',
+      utm_medium:   params.get('utm_medium')   || 'organico',
+      utm_campaign: params.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  params.get('utm_content')  || '',
+      utm_term:     params.get('utm_term')     || '',
+    };
+  }
+
+  /* ─── MÁSCARA DE TELEFONE ─── */
+  const phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) {
+      v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else {
+      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    }
+    this.value = v;
+  });
+
+  /* ─── VALIDAÇÃO ─── */
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!dados.lastName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  /* ─── ENVIO ─── */
+  document.getElementById('lead-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const msgErro   = document.getElementById('msg-erro');
+    const msgOk     = document.getElementById('msg-sucesso');
+
+    const utms = capturaUTMs();
+    const dados = {
+      firstName:    document.getElementById('firstName').value.trim(),
+      lastName:     document.getElementById('lastName').value.trim(),
+      email:        document.getElementById('email').value.trim().toLowerCase(),
+      phone:        document.getElementById('phone').value.replace(/\D/g, ''),
+      ...utms,
+    };
+
+    msgErro.style.display = 'none';
+    msgOk.style.display   = 'none';
+
+    if (!valida(dados)) {
+      msgErro.style.display = 'block';
+      return;
+    }
+
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando...';
+
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(dados),
+      });
+      window.location.href = CONFIG.REDIRECT_URL;
+    } catch (err) {
+      msgOk.style.display   = 'block';
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Quero cobrar no automático →';
+    }
+  });
+</script>
+
+</body>
+</html>

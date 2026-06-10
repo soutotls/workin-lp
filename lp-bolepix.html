@@ -76,23 +76,11 @@
     .hero {
       background: var(--azul);
       color: var(--branco);
-      padding: 64px 20px 72px;
-      text-align: center;
+      padding: 56px 20px 60px;
     }
-    .hero h1 {
-      font-size: clamp(1.65rem, 4vw, 2.5rem);
-      font-weight: 800;
-      line-height: 1.22;
-      margin-bottom: 20px;
-      max-width: 740px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .hero p {
-      font-size: clamp(1rem, 2.5vw, 1.18rem);
-      color: #c8ccd8;
-      max-width: 640px;
-      margin: 0 auto 36px;
+    .hero-inner {
+      max-width: 1000px;
+      margin: 0 auto;
     }
     .hero-badge {
       display: inline-flex;
@@ -104,7 +92,96 @@
       font-size: 0.85rem;
       padding: 6px 14px;
       border-radius: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .hero-cols {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 36px;
+      align-items: start;
+      text-align: left;
+    }
+    .hero h1 {
+      font-size: clamp(1.65rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+    .hero-subheadline {
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      font-weight: 700;
+      color: var(--verde);
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+    .hero-body {
+      font-size: 0.97rem;
+      color: #9aa0b8;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .hero-microbadges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: #7a9e88;
+    }
+    .hero-microbadges span { display: flex; align-items: center; gap: 5px; }
+    /* ─── HERO CARD ─── */
+    .hero-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0,173,80,0.3);
+      border-radius: 12px;
+      padding: 22px 20px;
+    }
+    .hero-card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .hero-checklist {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 18px;
+    }
+    .hero-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 7px 0;
+      font-size: 0.93rem;
+      color: #c8ccd8;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      line-height: 1.4;
+    }
+    .hero-checklist li:last-child { border-bottom: none; font-weight: 700; color: #fff; }
+    .hero-checklist .check-icon {
+      color: var(--verde);
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .hero-card-badge {
+      background: rgba(0,173,80,0.12);
+      border: 1px solid rgba(0,173,80,0.25);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      color: #7a9e88;
+      line-height: 1.5;
+    }
+    .hero-card-badge strong { color: #6de0a0; display: block; }
+    @media (max-width: 720px) {
+      .hero-cols { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .hero h1, .hero-subheadline, .hero-body { text-align: center; }
+      .hero-microbadges { justify-content: center; }
+      .hero-badge { display: inline-flex; }
     }
 
     /* ─── NÚMEROS ─── */
@@ -485,11 +562,39 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="container">
+  <div class="hero-inner container">
     <div class="hero-badge">💳 Para empresas que vendem, prestam serviços e precisam cobrar com eficiência</div>
-    <h1>Seu dinheiro ainda demora 3 dias para cair depois do pagamento?</h1>
-    <p>Com o BolePix do Workin, você emite boleto e PIX em segundos, cobra automaticamente no dia seguinte ao vencimento e recebe no mesmo dia — 24 horas, 7 dias por semana.</p>
-    <a href="#formulario" class="btn btn-lg">Quero cobrar no automático</a>
+    <div class="hero-cols">
+
+      <!-- ESQUERDA -->
+      <div>
+        <h1>Seu dinheiro ainda demora 3 dias para cair depois do pagamento?</h1>
+        <p class="hero-subheadline">Com o BolePix do Workin, você recebe da liquidação do boleto no mesmo dia — 24 horas, 7 dias por semana.</p>
+        <p class="hero-body">Você emite o boleto ou PIX em segundos, nós acompanhamos a liquidação e assim que o pagamento for confirmado, o valor cai na sua conta no mesmo dia.</p>
+        <a href="#formulario" class="btn btn-lg">Quero receber da liquidação no mesmo dia</a>
+        <div class="hero-microbadges">
+          <span>⚡ Emissão em segundos</span>
+          <span>🔄 Cobrança automática</span>
+          <span>🛡 Recebimento no mesmo dia</span>
+        </div>
+      </div>
+
+      <!-- DIREITA -->
+      <div class="hero-card">
+        <p class="hero-card-title">Dinheiro vem da liquidação do boleto</p>
+        <ul class="hero-checklist">
+          <li><span class="check-icon">✅</span> Emitiu o boleto</li>
+          <li><span class="check-icon">✅</span> Cliente pagou</li>
+          <li><span class="check-icon">✅</span> Boleto foi liquidado</li>
+          <li><span class="check-icon">✅</span> O valor cai na sua conta no mesmo dia!</li>
+        </ul>
+        <div class="hero-card-badge">
+          <strong>🛡 Mais previsibilidade no caixa</strong>
+          Menos espera, mais crescimento
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 

@@ -176,12 +176,55 @@
       line-height: 1.5;
     }
     .hero-card-badge strong { color: #6de0a0; display: block; }
+    /* Hero sub wrapper */
+    .hero-sub-wrapper { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .hero-sub-icon {
+      width: 54px; height: 54px;
+      background: rgba(0,173,80,0.18);
+      border: 1px solid rgba(0,173,80,0.3);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; margin-top: 3px;
+    }
+    .hero-sub-icon .check-badge {
+      position: absolute; bottom: -5px; right: -5px;
+      width: 20px; height: 20px;
+      background: var(--verde); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--azul);
+    }
+    /* Hero flow */
+    .hero-flow-row {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 4px; margin-bottom: 14px;
+    }
+    .hero-flow-item { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+    .hero-flow-icon {
+      width: 46px; height: 46px;
+      background: var(--verde); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .hero-flow-label { font-size: 0.7rem; color: #c8ccd8; text-align: center; line-height: 1.3; }
+    .hero-flow-label strong { color: #6de0a0; display: block; }
+    .hero-flow-arrow { color: #6de0a0; font-size: 1rem; margin-top: 13px; flex-shrink: 0; }
+    /* Hero checklist v2 */
+    .hero-checklist-v2 { list-style: none; padding: 0; margin-bottom: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .hero-checklist-v2 li { display: flex; align-items: flex-start; gap: 9px; padding: 4px 0; font-size: 0.8rem; color: #c8ccd8; line-height: 1.4; }
+    .hero-check-circle {
+      width: 18px; height: 18px;
+      background: var(--verde); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .hero-card-badge-inner { display: flex; align-items: flex-start; gap: 10px; }
     @media (max-width: 720px) {
       .hero-cols { grid-template-columns: 1fr; }
       .hero h1, .hero-subheadline, .hero-body { text-align: center; }
       .hero-microbadges { justify-content: center; }
       .hero-badge { display: inline-flex; }
       .hero-card { margin-top: 8px; }
+      .hero-sub-wrapper { flex-direction: column; align-items: center; }
+      .hero-sub-icon { margin-top: 0; }
     }
 
     /* ─── NÚMEROS ─── */
@@ -568,9 +611,17 @@
       <!-- ESQUERDA -->
       <div>
         <h1>Seu dinheiro ainda demora 3 dias para cair depois do pagamento?</h1>
-        <p class="hero-subheadline">Com o BolePix do Workin, você recebe da liquidação do boleto no mesmo dia — 24 horas, 7 dias por semana.</p>
-        <p class="hero-body">Você emite o boleto ou PIX em segundos, nós acompanhamos a liquidação e assim que o pagamento for confirmado, o valor cai na sua conta no mesmo dia.</p>
-        <a href="#formulario" class="btn btn-lg">Quero receber da liquidação no mesmo dia</a>
+        <div class="hero-sub-wrapper">
+          <div class="hero-sub-icon">
+            <svg viewBox="0 0 24 24" fill="white" width="26" height="26"><rect x="2" y="4" width="2" height="16"/><rect x="6" y="4" width="1" height="16"/><rect x="9" y="4" width="2" height="16"/><rect x="13" y="4" width="1" height="16"/><rect x="16" y="4" width="2" height="16"/><rect x="20" y="4" width="2" height="16"/></svg>
+            <div class="check-badge">
+              <svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg>
+            </div>
+          </div>
+          <p class="hero-subheadline">Com o BolePix do Workin,<br>você recebe da <u>liquidação do boleto</u><br>no mesmo dia — 24 horas, 7 dias por semana.</p>
+        </div>
+        <p class="hero-body">Você emite o boleto ou PIX em segundos.<br>Acompanhamos a liquidação e, assim que o pagamento for confirmado, o valor <span style="color:var(--verde)">cai na sua conta no mesmo dia.</span></p>
+        <a href="#formulario" class="btn btn-lg" style="display:block;width:100%;text-align:center;">⚡ Quero receber da liquidação no mesmo dia</a>
         <div class="hero-microbadges">
           <span>⚡ Emissão em segundos</span>
           <span>🔄 Cobrança automática</span>
@@ -581,15 +632,67 @@
       <!-- DIREITA -->
       <div class="hero-card">
         <p class="hero-card-title">Dinheiro vem da liquidação do boleto</p>
-        <ul class="hero-checklist">
-          <li><span class="check-icon">✅</span> Emitiu o boleto</li>
-          <li><span class="check-icon">✅</span> Cliente pagou</li>
-          <li><span class="check-icon">✅</span> Boleto foi liquidado</li>
-          <li><span class="check-icon">✅</span> O valor cai na sua conta no mesmo dia!</li>
+
+        <!-- Fluxo -->
+        <div class="hero-flow-row">
+          <div class="hero-flow-item">
+            <div class="hero-flow-icon">
+              <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><rect x="2" y="4" width="2" height="16"/><rect x="6" y="4" width="1" height="16"/><rect x="9" y="4" width="2" height="16"/><rect x="13" y="4" width="1" height="16"/><rect x="16" y="4" width="2" height="16"/><rect x="20" y="4" width="2" height="16"/></svg>
+            </div>
+            <span class="hero-flow-label">Você emite<br>o boleto</span>
+          </div>
+          <span class="hero-flow-arrow">→</span>
+          <div class="hero-flow-item">
+            <div class="hero-flow-icon">
+              <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="hero-flow-label">Cliente paga<br>o boleto</span>
+          </div>
+          <span class="hero-flow-arrow">→</span>
+          <div class="hero-flow-item">
+            <div class="hero-flow-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <span class="hero-flow-label">Boleto é<br>liquidado</span>
+          </div>
+          <span class="hero-flow-arrow">→</span>
+          <div class="hero-flow-item">
+            <div class="hero-flow-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="hero-flow-label">Você recebe<br><strong>no mesmo dia!</strong></span>
+          </div>
+        </div>
+
+        <!-- Checklist v2 -->
+        <ul class="hero-checklist-v2">
+          <li>
+            <div class="hero-check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+            Recebimento no mesmo dia, inclusive finais de semana e feriados
+          </li>
+          <li>
+            <div class="hero-check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+            Menos espera, mais previsibilidade no caixa
+          </li>
+          <li>
+            <div class="hero-check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+            Cobrança automática no dia seguinte ao vencimento
+          </li>
+          <li>
+            <div class="hero-check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+            Emissão de boleto e PIX em segundos
+          </li>
         </ul>
+
+        <!-- Badge -->
         <div class="hero-card-badge">
-          <strong>🛡 Mais previsibilidade no caixa</strong>
-          Menos espera, mais crescimento
+          <div class="hero-card-badge-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6de0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="flex-shrink:0;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <div>
+              <strong>Mais previsibilidade no caixa.</strong>
+              Menos espera, mais crescimento.
+            </div>
+          </div>
         </div>
       </div>
 

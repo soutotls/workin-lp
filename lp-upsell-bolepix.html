@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ative o BolePix no seu Workin e receba da liquidação do boleto no mesmo dia — inclusive finais de semana e feriados." />
+  <title>Ativar BolePix — Workin ERP</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #fff; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    :root {
+      --verde: #00AD50;
+      --verde-escuro: #008a3f;
+      --azul: #22253A;
+      --cinza-claro: #f5f5f5;
+      --cinza-texto: #555;
+      --branco: #ffffff;
+      --max-w: 860px;
+    }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+
+    .btn {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .btn:hover { background: var(--verde-escuro); }
+    .btn-lg { font-size: 1.15rem; padding: 20px 48px; }
+    .btn-branco { background: var(--branco); color: var(--verde-escuro); }
+    .btn-branco:hover { background: #f0f0f0; }
+
+    /* HEADER */
+    header {
+      background: var(--branco);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 3px solid var(--verde);
+    }
+    header img { height: 70px; margin: 0 auto; }
+
+    /* HERO */
+    .hero {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 52px 20px 56px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,173,80,0.15);
+      border: 1px solid rgba(0,173,80,0.4);
+      color: #6de0a0;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #9aa0b8;
+      max-width: 560px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+    .hero-sub strong { color: #6de0a0; }
+    .hero-microbadges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: #7a9e88;
+    }
+    .hero-microbadges span { display: flex; align-items: center; gap: 5px; }
+
+    /* BENEFÍCIOS */
+    .beneficios {
+      padding: 56px 20px;
+      background: var(--cinza-claro);
+    }
+    .beneficios h2 {
+      text-align: center;
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      color: var(--azul);
+      margin-bottom: 32px;
+    }
+    .beneficios-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .beneficio-item {
+      background: var(--branco);
+      border-radius: 10px;
+      padding: 24px 20px;
+      border-top: 3px solid var(--verde);
+      text-align: center;
+    }
+    .beneficio-item .icone { font-size: 2rem; margin-bottom: 12px; }
+    .beneficio-item h3 {
+      font-size: 0.95rem;
+      color: var(--azul);
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .beneficio-item p {
+      font-size: 0.88rem;
+      color: var(--cinza-texto);
+      line-height: 1.5;
+    }
+    @media (max-width: 600px) {
+      .beneficios-grid { grid-template-columns: 1fr; }
+    }
+
+    /* COMPARATIVO */
+    .comparativo { padding: 56px 20px; background: #fff; }
+    .comparativo h2 {
+      text-align: center;
+      color: var(--azul);
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      margin-bottom: 28px;
+    }
+    .comparativo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .comparativo-card { border-radius: 10px; padding: 24px 20px; }
+    .comparativo-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--azul); }
+    .comparativo-card p {
+      font-size: 0.95rem;
+      color: var(--cinza-texto);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      line-height: 1.5;
+    }
+    .comparativo-card p:last-child { border-bottom: none; }
+    .comparativo-neg { border: 2px solid #d9534f; }
+    .comparativo-pos { border: 2px solid var(--verde); }
+    @media (max-width: 480px) { .comparativo-grid { grid-template-columns: 1fr; } }
+
+    /* COMO ATIVAR */
+    .ativar {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 56px 20px;
+      text-align: center;
+    }
+    .ativar h2 {
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      margin-bottom: 36px;
+    }
+    .ativar-steps {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .ativar-steps::before {
+      content: '';
+      position: absolute;
+      top: 22px;
+      left: calc(16.6% + 22px);
+      right: calc(16.6% + 22px);
+      height: 2px;
+      background: rgba(0,173,80,0.3);
+    }
+    .ativar-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 10px; }
+    .step-circle {
+      width: 44px; height: 44px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800;
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .ativar-step span {
+      font-size: 0.88rem;
+      color: #9aa0b8;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .ativar-step strong { color: #fff; display: block; margin-bottom: 4px; font-size: 0.92rem; }
+    @media (max-width: 540px) {
+      .ativar-steps { flex-direction: column; gap: 24px; }
+      .ativar-steps::before { display: none; }
+      .ativar-step { flex-direction: row; text-align: left; }
+      .ativar-step span { text-align: left; }
+    }
+
+    /* FORMULÁRIO */
+    .formulario {
+      background: var(--cinza-claro);
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .formulario h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+    .formulario .subtitulo {
+      color: var(--cinza-texto);
+      margin-bottom: 32px;
+      font-size: 1rem;
+    }
+    .form-box {
+      background: var(--branco);
+      border-radius: 10px;
+      padding: 36px 28px;
+      max-width: 440px;
+      margin: 0 auto;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.09);
+    }
+    .form-cliente-badge {
+      background: rgba(0,173,80,0.08);
+      border: 1px solid rgba(0,173,80,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--verde-escuro);
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      color: #1a1a1a;
+    }
+    .form-group input:focus { outline: none; border-color: var(--verde); }
+    .form-legal { font-size: 0.78rem; color: #999; margin-top: 12px; line-height: 1.4; }
+    #msg-erro { color: #d32f2f; font-size: 0.88rem; margin-top: 10px; display: none; }
+    #msg-sucesso { color: var(--verde-escuro); font-size: 0.95rem; margin-top: 10px; display: none; font-weight: 600; }
+    .btn-submit { margin-top: 20px; width: 100%; font-size: 1.05rem; padding: 17px; }
+
+    /* FAQ */
+    .faq { padding: 56px 20px; background: #fff; }
+    .faq h2 { font-size: 1.4rem; color: var(--azul); text-align: center; margin-bottom: 28px; }
+    .faq-lista { max-width: 640px; margin: 0 auto; }
+    details { background: var(--cinza-claro); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary {
+      padding: 16px 20px;
+      font-weight: 600;
+      color: var(--azul);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--verde); flex-shrink: 0; margin-left: 12px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 20px 16px; color: var(--cinza-texto); font-size: 0.93rem; line-height: 1.6; }
+
+    /* CTA FINAL */
+    .cta-final { background: var(--verde); color: var(--branco); padding: 56px 20px; text-align: center; }
+    .cta-final h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 800; margin-bottom: 10px; }
+    .cta-final p { font-size: 1rem; margin-bottom: 28px; opacity: 0.9; }
+
+    /* FOOTER */
+    footer {
+      background: var(--azul);
+      color: #7a7f95;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.82rem;
+      line-height: 1.8;
+    }
+    footer a { color: #7a7f95; text-decoration: underline; }
+
+    @media (max-width: 540px) {
+      .hero h1 { font-size: 1.7rem; }
+      .btn-lg { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <img src="logo-workin.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">✅ Módulo disponível para sua conta Workin</div>
+    <h1>Receba seus boletos liquidados no mesmo dia — direto no financeiro que você já usa</h1>
+    <p class="hero-sub">
+      O BolePix está disponível para ativar agora na sua conta.
+      Fale com nosso especialista e <strong>comece a receber em D+0 em menos de 2 dias úteis</strong> — sem trocar de banco, sem instalar nada novo.
+    </p>
+    <a href="#formulario" class="btn btn-lg">⚡ Quero ativar o BolePix</a>
+    <div class="hero-microbadges">
+      <span>🔄 Ativação em até 2 dias úteis</span>
+      <span>🏦 7 bancos integrados</span>
+      <span>🛡 Sem trocar de banco</span>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFÍCIOS -->
+<section class="beneficios">
+  <div class="container">
+    <h2>O que muda no seu financeiro depois da ativação</h2>
+    <div class="beneficios-grid">
+      <div class="beneficio-item">
+        <div class="icone">⚡</div>
+        <h3>Boleto e PIX gerados e enviados automaticamente</h3>
+        <p>Sem abrir o internet banking. Sem digitar nada. O Workin emite e envia direto para o cliente.</p>
+      </div>
+      <div class="beneficio-item">
+        <div class="icone">🕐</div>
+        <h3>Liquidação no mesmo dia — 24x7</h3>
+        <p>Inclusive finais de semana e feriados. Chega de esperar D+3 para o dinheiro aparecer na conta.</p>
+      </div>
+      <div class="beneficio-item">
+        <div class="icone">🔄</div>
+        <h3>Baixa automática no contas a receber</h3>
+        <p>Quando o cliente paga, o Workin já dá baixa sozinho. Zero trabalho manual no financeiro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section class="comparativo">
+  <div class="container">
+    <h2>Como fica na prática depois de ativar</h2>
+    <div class="comparativo-grid">
+      <div class="comparativo-card comparativo-neg">
+        <h3>❌ Como está hoje</h3>
+        <p>Emissão de boleto manual</p>
+        <p>Dinheiro cai em D+3</p>
+        <p>Baixa manual no sistema</p>
+        <p>Fluxo de caixa desatualizado</p>
+      </div>
+      <div class="comparativo-card comparativo-pos">
+        <h3>✅ Com o BolePix ativado</h3>
+        <p>Emissão e envio automáticos</p>
+        <p>Dinheiro cai no mesmo dia</p>
+        <p>Baixa automática via retorno bancário</p>
+        <p>Financeiro atualizado em tempo real</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO ATIVAR -->
+<section class="ativar">
+  <div class="container">
+    <h2>Como funciona a ativação</h2>
+    <div class="ativar-steps">
+      <div class="ativar-step">
+        <div class="step-circle">1</div>
+        <span><strong>Você fala com o especialista</strong>Preenche o form abaixo e nossa equipe entra em contato</span>
+      </div>
+      <div class="ativar-step">
+        <div class="step-circle">2</div>
+        <span><strong>Configuramos na sua conta</strong>Ativação e configuração feita pelo nosso time em até 2 dias úteis</span>
+      </div>
+      <div class="ativar-step">
+        <div class="step-circle">3</div>
+        <span><strong>Você começa a receber em D+0</strong>Tudo dentro do Workin que você já conhece</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="formulario">
+  <div class="container">
+    <h2>Fale com nosso especialista para ativar</h2>
+    <p class="subtitulo">Preencha abaixo e nossa equipe entra em contato em até 1 dia útil.</p>
+    <div class="form-box">
+      <div class="form-cliente-badge">✅ Você já é cliente Workin — ativação rápida e sem burocracia</div>
+      <form id="lead-form" novalidate>
+        <div class="form-group">
+          <label for="fullName">Nome Completo *</label>
+          <input type="text" id="fullName" name="fullName" placeholder="João Silva" required />
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro">Por favor, preencha todos os campos corretamente.</div>
+        <div id="msg-sucesso">Recebido! Nossa equipe vai entrar em contato em breve.</div>
+        <button type="submit" class="btn btn-submit">Quero ativar o BolePix →</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>Dúvidas frequentes</h2>
+    <div class="faq-lista">
+
+      <details>
+        <summary>Preciso trocar de banco para ativar o BolePix?</summary>
+        <p>Não. O BolePix funciona com os principais bancos do Brasil: Banco do Brasil, Bradesco, Caixa, Itaú, Santander, Sicredi e Sicoob. Se você já tem conta em um deles, é só ativar o módulo.</p>
+      </details>
+
+      <details>
+        <summary>Quanto tempo leva para ativar?</summary>
+        <p>Normalmente 1 a 2 dias úteis. Nossa equipe faz toda a configuração e te acompanha até o módulo estar funcionando com confiança — suporte por pessoas reais, sem chatbot.</p>
+      </details>
+
+      <details>
+        <summary>Tem custo adicional além da minha mensalidade atual?</summary>
+        <p>Sim, o BolePix é um módulo add-on contratado à parte da licença principal. Nosso especialista passa todos os detalhes de valor e condições no contato.</p>
+      </details>
+
+      <details>
+        <summary>Meu processo atual vai mudar muito depois de ativar?</summary>
+        <p>Praticamente nada muda para você — só que deixa de ser manual. O fluxo de emissão e conciliação passa a ser automático dentro do Workin que você já usa.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <h2>Seu boleto pago hoje. Você recebe hoje.</h2>
+    <p>Ative o BolePix na sua conta e elimine o D+3 de uma vez.</p>
+    <a href="#formulario" class="btn btn-lg btn-branco">Quero ativar agora</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+    <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+    <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+    <p>
+      <a href="/politica-de-privacidade.html">Política de Privacidade</a> ·
+      <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ─── CONFIGURAÇÃO ─── */
+  const CONFIG = {
+    WEBHOOK_URL: '{{WEBHOOK_URL_UPSELL_BOLEPIX}}',
+    REDIRECT_URL: '/obrigado-bolepix.html',
+    UTM_CAMPAIGN_DEFAULT: 'upsell-bolepix',
+  };
+
+  /* ─── PRÉ-PREENCHIMENTO via URL params (quando passado pelo sistema) ─── */
+  (function prefill() {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('nome'))     document.getElementById('fullName').value = p.get('nome');
+    if (p.get('email'))    document.getElementById('email').value    = p.get('email');
+    if (p.get('telefone')) document.getElementById('phone').value    = p.get('telefone');
+  })();
+
+  /* ─── CAPTURA UTMs ─── */
+  function capturaUTMs() {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   p.get('utm_source')   || 'workin-sistema',
+      utm_medium:   p.get('utm_medium')   || 'banner-interno',
+      utm_campaign: p.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  p.get('utm_content')  || '',
+      utm_term:     p.get('utm_term')     || '',
+    };
+  }
+
+  /* ─── MÁSCARA DE TELEFONE ─── */
+  document.getElementById('phone').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    else                v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    this.value = v;
+  });
+
+  /* ─── VALIDAÇÃO ─── */
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  /* ─── ENVIO ─── */
+  document.getElementById('lead-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const msgErro   = document.getElementById('msg-erro');
+    const msgOk     = document.getElementById('msg-sucesso');
+
+    const utms         = capturaUTMs();
+    const nomeCompleto = document.getElementById('fullName').value.trim();
+    const partesNome   = nomeCompleto.split(' ');
+
+    const dados = {
+      firstName: partesNome[0] || '',
+      lastName:  partesNome.slice(1).join(' ') || '',
+      email:     document.getElementById('email').value.trim().toLowerCase(),
+      phone:     document.getElementById('phone').value.replace(/\D/g, ''),
+      ...utms,
+    };
+
+    msgErro.style.display = 'none';
+    msgOk.style.display   = 'none';
+
+    if (!valida(dados)) {
+      msgErro.style.display = 'block';
+      return;
+    }
+
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando...';
+
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(dados),
+      });
+      window.location.href = CONFIG.REDIRECT_URL;
+    } catch (err) {
+      msgOk.style.display   = 'block';
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Quero ativar o BolePix →';
+    }
+  });
+</script>
+
+</body>
+</html>

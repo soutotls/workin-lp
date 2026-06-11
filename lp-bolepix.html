@@ -586,6 +586,38 @@
       .numero-item:nth-child(1), .numero-item:nth-child(2) { border-right: none; }
       .numero-item:nth-child(3), .numero-item:nth-child(4) { border-bottom: none; }
     }
+    /* ─── COMPARATIVO ─── */
+    .comparativo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .comparativo-card {
+      border-radius: 10px;
+      padding: 24px 20px;
+    }
+    .comparativo-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--azul);
+    }
+    .comparativo-card p {
+      font-size: 0.95rem;
+      color: var(--cinza-texto);
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      line-height: 1.5;
+    }
+    .comparativo-card p:last-child { border-bottom: none; }
+    .comparativo-neg { border: 2px solid #d9534f; }
+    .comparativo-pos { border: 2px solid var(--verde); }
+    @media (max-width: 480px) {
+      .comparativo-grid { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 540px) {
       .form-row { grid-template-columns: 1fr; }
       .btn-lg { width: 100%; max-width: 100%; }
@@ -636,7 +668,7 @@
               <svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg>
             </div>
           </div>
-          <p class="hero-subheadline">Com o BolePix do Workin,<br>você recebe da <u>liquidação do boleto</u><br>no mesmo dia — 24 horas, 7 dias por semana.</p>
+          <p class="hero-subheadline">Com o BolePix do Workin, você recebe da <u>liquidação do boleto</u> no mesmo dia — inclusive finais de semana e feriados.</p>
         </div>
         <p class="hero-body">Você emite o boleto ou PIX em segundos.<br>Acompanhamos a liquidação e, assim que o pagamento for confirmado, o valor <span style="color:var(--verde)">cai na sua conta no mesmo dia.</span></p>
         <a href="#formulario" class="btn btn-lg" style="display:block;width:100%;text-align:center;">⚡ Quero receber da liquidação no mesmo dia</a>
@@ -737,6 +769,29 @@
       <div class="numero-item">
         <span class="valor">100%</span>
         <span class="label">integrado ao Workin ERP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section style="padding:60px 20px;background:#fff;">
+  <div class="container">
+    <h2 style="text-align:center;color:var(--azul);margin-bottom:30px;">Qual a diferença na prática?</h2>
+    <div class="comparativo-grid">
+      <div class="comparativo-card comparativo-neg">
+        <h3>❌ Boleto Tradicional</h3>
+        <p>Cliente paga hoje</p>
+        <p>Você recebe em D+3</p>
+        <p>Baixa manual no sistema</p>
+        <p>Fluxo de caixa parado</p>
+      </div>
+      <div class="comparativo-card comparativo-pos">
+        <h3>✅ Workin BolePix</h3>
+        <p>Cliente paga hoje</p>
+        <p>Você recebe hoje</p>
+        <p>Baixa automática via retorno bancário</p>
+        <p>Fluxo de caixa atualizado em tempo real</p>
       </div>
     </div>
   </div>
@@ -893,22 +948,16 @@
 <!-- FORMULÁRIO -->
 <section class="formulario" id="formulario">
   <div class="container">
-    <h2>Veja o BolePix funcionando na sua empresa</h2>
+    <h2>Veja como receber da liquidação do boleto no mesmo dia</h2>
     <p class="subtitulo">Preencha abaixo e nossa equipe mostra como automatizar sua cobrança em menos de 30 minutos.</p>
     <div class="form-box">
       <form id="lead-form" novalidate>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">Nome *</label>
-            <input type="text" id="firstName" name="firstName" placeholder="João" required />
-          </div>
-          <div class="form-group">
-            <label for="lastName">Sobrenome *</label>
-            <input type="text" id="lastName" name="lastName" placeholder="Silva" required />
-          </div>
+        <div class="form-group">
+          <label for="fullName">Nome Completo *</label>
+          <input type="text" id="fullName" name="fullName" placeholder="João Silva" required />
         </div>
         <div class="form-group">
-          <label for="email">E-mail *</label>
+          <label for="email">E-mail Corporativo *</label>
           <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
         </div>
         <div class="form-group">
@@ -933,8 +982,6 @@
         "Antes eu gastava um dia inteiro emitindo boleto para todos os clientes. Hoje o Workin faz isso em segundos. E o melhor: quando o cliente paga, o sistema já baixa automaticamente — eu nem preciso mais entrar no banco."
       </blockquote>
       <cite>⭐⭐⭐⭐⭐ — Cliente Workin · Empresa de serviços recorrentes</cite>
-      <br/><br/>
-      <small style="color:#bbb;font-size:0.78rem;font-style:italic;">* Substituir por depoimento real quando disponível.</small>
     </div>
   </div>
 </section>
@@ -1031,7 +1078,6 @@
   /* ─── VALIDAÇÃO ─── */
   function valida(dados) {
     if (!dados.firstName.trim()) return false;
-    if (!dados.lastName.trim()) return false;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
     if (dados.phone.length < 10) return false;
     return true;
@@ -1046,11 +1092,13 @@
     const msgOk     = document.getElementById('msg-sucesso');
 
     const utms = capturaUTMs();
+    const nomeCompleto = document.getElementById('fullName').value.trim();
+    const partesNome   = nomeCompleto.split(' ');
     const dados = {
-      firstName:    document.getElementById('firstName').value.trim(),
-      lastName:     document.getElementById('lastName').value.trim(),
-      email:        document.getElementById('email').value.trim().toLowerCase(),
-      phone:        document.getElementById('phone').value.replace(/\D/g, ''),
+      firstName: partesNome[0] || '',
+      lastName:  partesNome.slice(1).join(' ') || '',
+      email:     document.getElementById('email').value.trim().toLowerCase(),
+      phone:     document.getElementById('phone').value.replace(/\D/g, ''),
       ...utms,
     };
 

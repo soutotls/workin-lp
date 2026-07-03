@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="O Clube de Fidelidade Workin gera cashback automático em cada venda, avisa seu cliente pelo WhatsApp e o traz de volta sem você fazer nada." />
+  <title>Clube de Fidelidade — Workin ERP</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Seu cliente comprou, foi embora — e você nunca mais ouviu falar dele." />
+  <meta property="og:description" content="O Clube de Fidelidade Workin gera cashback automático e traz seus clientes de volta sem você fazer nada." />
+  <meta property="og:image" content="https://lp.sistemaworkin.com.br/og-clube-fidelidade.jpg" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #fff; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    :root {
+      --verde: #00AD50;
+      --verde-escuro: #008a3f;
+      --azul: #22253A;
+      --cinza-claro: #f5f5f5;
+      --cinza-texto: #555;
+      --branco: #ffffff;
+      --max-w: 860px;
+    }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+    .btn {
+      display: inline-block; background: var(--verde); color: var(--branco);
+      font-size: 1.1rem; font-weight: 700; padding: 16px 36px; border-radius: 6px;
+      border: none; cursor: pointer; transition: background 0.2s; text-align: center;
+    }
+    .btn:hover { background: var(--verde-escuro); }
+    .btn-lg { font-size: 1.15rem; padding: 20px 48px; }
+    .tag {
+      display: inline-block; background: var(--verde); color: var(--branco);
+      font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+    }
+
+    /* HEADER */
+    header { background: var(--branco); padding: 20px 0; text-align: center; border-bottom: 3px solid var(--verde); }
+    header img { height: 70px; margin: 0 auto; }
+
+    /* HERO */
+    .hero { background: var(--azul); color: var(--branco); padding: 56px 20px 60px; }
+    .hero-inner { max-width: 1000px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,173,80,0.15); border: 1px solid rgba(0,173,80,0.4);
+      color: #6de0a0; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero-cols { display: grid; grid-template-columns: 1fr 320px; gap: 36px; align-items: start; text-align: left; }
+    .hero h1 { font-size: clamp(1.65rem, 3.5vw, 2.4rem); font-weight: 800; line-height: 1.2; margin-bottom: 18px; }
+    .hero-subheadline { font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 700; color: var(--verde); line-height: 1.4; margin-bottom: 16px; }
+    .hero-body { font-size: 0.97rem; color: #9aa0b8; line-height: 1.6; margin-bottom: 28px; }
+    .hero-microbadges { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 0.82rem; color: #7a9e88; }
+    .hero-microbadges span { display: flex; align-items: center; gap: 5px; }
+    .hero-micro-sub { font-size: 0.8rem; color: #6de0a0; margin-top: 10px; opacity: 0.85; }
+
+    /* Hero Card */
+    .hero-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(0,173,80,0.3); border-radius: 12px; padding: 24px 20px; }
+    .hero-card-title { font-size: 0.82rem; font-weight: 700; color: var(--verde); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 18px; }
+    .hero-ciclo { display: flex; flex-direction: column; gap: 0; margin-bottom: 18px; }
+    .hero-ciclo-item { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 16px; position: relative; }
+    .hero-ciclo-item:not(:last-child)::after { content: ''; position: absolute; left: 13px; top: 30px; bottom: 0; width: 2px; background: rgba(0,173,80,0.3); }
+    .hero-ciclo-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--verde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.75rem; font-weight: 800; margin-top: 1px; }
+    .hero-ciclo-text strong { display: block; font-size: 0.88rem; color: #fff; line-height: 1.3; }
+    .hero-ciclo-text span { font-size: 0.78rem; color: #aab0c0; }
+    .hero-card-badge { background: rgba(0,173,80,0.12); border: 1px solid rgba(0,173,80,0.25); border-radius: 8px; padding: 12px 14px; font-size: 0.82rem; color: #7a9e88; line-height: 1.5; font-style: italic; }
+    .hero-card-badge strong { color: #6de0a0; font-style: normal; display: block; margin-bottom: 2px; }
+
+    @media (max-width: 720px) {
+      .hero-cols { grid-template-columns: 1fr; }
+      .hero h1 { text-align: center; font-size: 1.85rem; }
+      .hero-subheadline { text-align: center; }
+      .hero-body { text-align: center; }
+      .hero-microbadges { justify-content: center; }
+    }
+
+    /* NÚMEROS */
+    .numeros { background: var(--verde); color: var(--branco); padding: 36px 20px; }
+    .numeros-grid { display: grid; grid-template-columns: repeat(4, 1fr); max-width: var(--max-w); margin: 0 auto; text-align: center; }
+    .numero-item { padding: 12px 10px; border-right: 1px solid rgba(255,255,255,0.25); }
+    .numero-item:last-child { border-right: none; }
+    .numero-item .valor { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; line-height: 1; display: block; }
+    .numero-item .label { font-size: 0.8rem; opacity: 0.85; margin-top: 5px; line-height: 1.3; }
+    @media (max-width: 600px) {
+      .numeros-grid { grid-template-columns: repeat(2, 1fr); }
+      .numero-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 16px 10px; }
+      .numero-item:nth-child(3), .numero-item:nth-child(4) { border-bottom: none; }
+    }
+
+    /* PROBLEMA */
+    .problema { background: var(--cinza-claro); padding: 64px 20px; text-align: center; }
+    .problema h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .problema .subtitulo { color: var(--cinza-texto); margin-bottom: 40px; font-size: 1rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .dores { display: flex; flex-direction: column; gap: 14px; max-width: 640px; margin: 0 auto; text-align: left; }
+    .dor-item { display: flex; align-items: flex-start; gap: 14px; background: var(--branco); padding: 18px 20px; border-radius: 8px; border-left: 4px solid var(--verde); }
+    .dor-item .icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .dor-item p { font-size: 1rem; color: var(--azul); font-weight: 500; line-height: 1.4; font-style: italic; }
+
+    /* COMPARATIVO */
+    .comparativo { padding: 60px 20px; background: #fff; }
+    .comparativo h2 { text-align: center; color: var(--azul); font-size: clamp(1.2rem, 3vw, 1.6rem); margin-bottom: 30px; }
+    .comparativo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: var(--max-w); margin: 0 auto; }
+    .comparativo-card { border-radius: 10px; padding: 24px 20px; }
+    .comparativo-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--azul); }
+    .comparativo-card p { font-size: 0.95rem; color: var(--cinza-texto); padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.06); line-height: 1.5; }
+    .comparativo-card p:last-child { border-bottom: none; }
+    .comparativo-neg { border: 2px solid #d9534f; }
+    .comparativo-pos { border: 2px solid var(--verde); }
+    @media (max-width: 480px) { .comparativo-grid { grid-template-columns: 1fr; } }
+
+    /* VALUE STACK */
+    .value-stack { background: var(--cinza-claro); padding: 64px 20px; text-align: center; }
+    .value-stack h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .value-stack .subtitulo { color: var(--cinza-texto); margin-bottom: 40px; }
+    .beneficios { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin: 0 auto 40px; text-align: left; }
+    .beneficio-card { display: flex; align-items: flex-start; gap: 18px; border: 1.5px solid #e8e8e8; border-radius: 10px; padding: 22px 20px; background: var(--branco); transition: border-color 0.2s; }
+    .beneficio-card:hover { border-color: var(--verde); }
+    .beneficio-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .beneficio-card h3 { font-size: 1rem; color: var(--azul); font-weight: 700; margin-bottom: 4px; }
+    .beneficio-preco { font-size: 0.78rem; color: var(--cinza-texto); font-style: italic; margin-bottom: 8px; }
+    .beneficio-card p { font-size: 0.92rem; color: var(--cinza-texto); line-height: 1.55; }
+
+    /* Stack Slide */
+    .stack-slide {
+      background: var(--azul); border-radius: 12px; padding: 28px 32px;
+      max-width: 600px; margin: 0 auto; text-align: left; color: var(--branco);
+    }
+    .stack-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.93rem; gap: 12px; }
+    .stack-row:last-of-type { border-bottom: none; }
+    .stack-row .item { display: flex; align-items: center; gap: 8px; color: #c8ccd8; }
+    .stack-row .item .ck { color: var(--verde); font-weight: 700; flex-shrink: 0; }
+    .stack-row .preco { color: #9aa0b8; font-size: 0.82rem; white-space: nowrap; flex-shrink: 0; }
+    .stack-divider { border: none; border-top: 2px solid rgba(0,173,80,0.4); margin: 14px 0; }
+    .stack-total { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .stack-total .label { color: #9aa0b8; font-size: 0.85rem; line-height: 1.4; }
+    .stack-total .label del { display: block; font-size: 0.95rem; margin-bottom: 2px; }
+    .stack-preco-final { text-align: right; flex-shrink: 0; }
+    .stack-preco-final .valor { font-size: 1.8rem; font-weight: 800; color: var(--verde); display: block; line-height: 1; }
+    .stack-preco-final .detalhe { font-size: 0.78rem; color: #7a9e88; margin-top: 2px; }
+
+    /* ROI */
+    .roi { background: var(--azul); color: var(--branco); padding: 64px 20px; text-align: center; }
+    .roi h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 8px; }
+    .roi .subtitulo { color: #9aa0b8; margin-bottom: 36px; font-size: 0.97rem; }
+    .roi-box {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(0,173,80,0.3);
+      border-radius: 12px; padding: 32px 28px; max-width: 560px; margin: 0 auto 28px; text-align: left;
+    }
+    .roi-box-title { font-size: 0.8rem; font-weight: 700; color: var(--verde); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
+    .roi-linha { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 0.92rem; gap: 12px; }
+    .roi-linha:last-of-type { border-bottom: none; }
+    .roi-linha .desc { color: #9aa0b8; }
+    .roi-linha .val { color: #fff; font-weight: 600; white-space: nowrap; }
+    .roi-linha.destaque .desc { color: #6de0a0; font-weight: 700; }
+    .roi-linha.destaque .val { color: #6de0a0; font-size: 1.05rem; }
+    .roi-linha.custo .val { color: #ff9494; }
+    .roi-linha.lucro .val { color: #6de0a0; font-size: 1.1rem; }
+    .roi-linha.resultado .desc, .roi-linha.resultado .val { font-size: 1.1rem; font-weight: 800; color: var(--verde); }
+    .roi-divider { border: none; border-top: 1px solid rgba(0,173,80,0.3); margin: 8px 0; }
+    .roi-break { background: rgba(0,173,80,0.12); border: 1px solid rgba(0,173,80,0.3); border-radius: 8px; padding: 16px 20px; max-width: 560px; margin: 0 auto 28px; font-size: 0.95rem; color: #6de0a0; line-height: 1.5; }
+    .roi-break strong { display: block; font-size: 1.05rem; margin-bottom: 4px; color: #fff; }
+    .roi-vs { max-width: 560px; margin: 0 auto; text-align: left; }
+    .roi-vs-titulo { font-size: 0.82rem; color: #9aa0b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+    .roi-vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .roi-vs-card { border-radius: 8px; padding: 16px; }
+    .roi-vs-neg { background: rgba(217,83,79,0.1); border: 1px solid rgba(217,83,79,0.3); }
+    .roi-vs-pos { background: rgba(0,173,80,0.1); border: 1px solid rgba(0,173,80,0.3); }
+    .roi-vs-card h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+    .roi-vs-neg h4 { color: #ff9494; }
+    .roi-vs-pos h4 { color: #6de0a0; }
+    .roi-vs-card p { font-size: 0.82rem; color: #9aa0b8; line-height: 1.5; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .roi-vs-card p:last-child { border-bottom: none; }
+    @media (max-width: 480px) { .roi-vs-grid { grid-template-columns: 1fr; } }
+
+    /* PREÇO */
+    .preco-secao { padding: 64px 20px; text-align: center; }
+    .preco-secao h2 { font-size: clamp(1.4rem, 3vw, 2rem); color: var(--azul); margin-bottom: 8px; }
+    .preco-box {
+      background: var(--cinza-claro); border-radius: 12px; padding: 36px 32px;
+      max-width: 600px; margin: 24px auto; text-align: left;
+    }
+    .preco-valor { font-size: 3rem; font-weight: 800; color: var(--verde); line-height: 1; }
+    .preco-valor span { font-size: 1.2rem; font-weight: 400; color: var(--cinza-texto); }
+    .preco-detalhe { font-size: 0.9rem; color: var(--cinza-texto); margin-top: 6px; margin-bottom: 20px; }
+    .preco-copy { font-size: 0.97rem; color: var(--azul); line-height: 1.7; }
+    .preco-copy strong { color: var(--verde-escuro); }
+    .preco-nota { font-size: 0.85rem; color: var(--cinza-texto); margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; line-height: 1.5; }
+
+    /* FLUXO */
+    .fluxo { background: var(--azul); color: var(--branco); padding: 56px 20px; text-align: center; }
+    .fluxo h2 { font-size: clamp(1.2rem, 3vw, 1.6rem); margin-bottom: 10px; }
+    .fluxo .subtitulo { color: #9aa0b8; margin-bottom: 36px; font-size: 0.97rem; }
+    .fluxo-steps { display: flex; flex-direction: column; gap: 0; max-width: 560px; margin: 0 auto; text-align: left; }
+    .fluxo-step { display: flex; align-items: flex-start; gap: 18px; padding-bottom: 28px; position: relative; }
+    .fluxo-step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 36px; bottom: 0; width: 2px; background: rgba(0,173,80,0.3); }
+    .fluxo-step:last-child { padding-bottom: 0; }
+    .step-num { background: var(--verde); color: var(--branco); font-weight: 800; font-size: 0.9rem; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+    .step-text strong { display: block; font-size: 1rem; margin-bottom: 3px; }
+    .step-text span { font-size: 0.9rem; color: #aab0c0; line-height: 1.5; }
+    .integracao { background: rgba(0,173,80,0.08); border: 1px solid rgba(0,173,80,0.25); border-radius: 10px; padding: 20px 24px; max-width: 560px; margin: 32px auto 0; text-align: left; display: flex; gap: 14px; align-items: flex-start; }
+    .integracao-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .integracao p { font-size: 0.88rem; color: #6de0a0; line-height: 1.5; }
+    .integracao p strong { color: #fff; }
+
+    /* FORMULÁRIO */
+    .formulario { background: var(--cinza-claro); padding: 64px 20px; text-align: center; }
+    .formulario h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .formulario .subtitulo { color: var(--cinza-texto); margin-bottom: 32px; }
+    .form-box { background: var(--branco); border-radius: 10px; padding: 36px 28px; max-width: 480px; margin: 0 auto; box-shadow: 0 2px 20px rgba(0,0,0,0.09); }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--azul); margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 13px 14px; border: 1.5px solid #ddd; border-radius: 6px; font-size: 1rem; transition: border-color 0.2s; color: #1a1a1a; }
+    .form-group input:focus { outline: none; border-color: var(--verde); }
+    .form-legal { font-size: 0.78rem; color: #999; margin-top: 12px; line-height: 1.4; }
+    #msg-erro { color: #d32f2f; font-size: 0.88rem; margin-top: 10px; display: none; }
+    #msg-sucesso { color: var(--verde-escuro); font-size: 0.95rem; margin-top: 10px; display: none; font-weight: 600; }
+    .btn-submit { margin-top: 20px; width: 100%; font-size: 1.05rem; padding: 17px; }
+
+    /* PROVA */
+    .prova { padding: 64px 20px; text-align: center; }
+    .prova h2 { font-size: 1.5rem; color: var(--azul); margin-bottom: 32px; }
+    .depoimento { background: var(--cinza-claro); border-left: 4px solid var(--verde); border-radius: 8px; padding: 28px 24px; max-width: 600px; margin: 0 auto; text-align: left; }
+    .depoimento blockquote { font-size: 1.05rem; color: var(--azul); font-style: italic; margin-bottom: 16px; line-height: 1.7; }
+    .depoimento cite { font-size: 0.88rem; color: var(--cinza-texto); font-style: normal; font-weight: 600; }
+
+    /* FAQ */
+    .faq { background: var(--cinza-claro); padding: 64px 20px; }
+    .faq h2 { font-size: 1.5rem; color: var(--azul); text-align: center; margin-bottom: 32px; }
+    .faq-lista { max-width: 680px; margin: 0 auto; }
+    details { background: var(--branco); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary { padding: 18px 20px; font-weight: 600; color: var(--azul); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.97rem; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--verde); flex-shrink: 0; margin-left: 12px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 20px 18px; color: var(--cinza-texto); font-size: 0.95rem; line-height: 1.6; }
+
+    /* CTA FINAL */
+    .cta-final { background: var(--verde); color: var(--branco); padding: 72px 20px; text-align: center; }
+    .cta-eyebrow { font-size: 0.9rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 16px; }
+    .cta-final h2 { font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 800; margin-bottom: 14px; line-height: 1.15; }
+    .cta-final p { font-size: 1.05rem; margin-bottom: 32px; opacity: 0.9; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .btn-branco { background: var(--branco); color: var(--verde-escuro); }
+    .btn-branco:hover { background: #f0f0f0; }
+    .cta-micro { font-size: 0.82rem; opacity: 0.8; margin-top: 14px; }
+
+    /* FOOTER */
+    footer { background: var(--azul); color: #7a7f95; padding: 28px 20px; text-align: center; font-size: 0.82rem; line-height: 1.8; }
+    footer a { color: #7a7f95; text-decoration: underline; }
+
+    @media (max-width: 540px) {
+      .btn-lg { width: 100%; max-width: 100%; }
+      .preco-valor { font-size: 2.4rem; }
+      .roi-box { padding: 24px 18px; }
+      .stack-slide { padding: 22px 18px; }
+      .preco-box { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <img src="logo-workin.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner container">
+    <div class="hero-badge">⭐ Novo módulo disponível no seu Workin — exclusivo para clientes ativos</div>
+    <div class="hero-cols">
+      <div>
+        <h1>Seu cliente comprou, foi embora — e você nunca mais ouviu falar dele.</h1>
+        <p class="hero-subheadline">O Clube de Fidelidade Workin gera cashback automático em cada venda, avisa seu cliente pelo WhatsApp na hora certa e o traz de volta sem você fazer nada. Tudo dentro do Workin que você já usa.</p>
+        <p class="hero-body">Você já tem o controle da operação. Agora o sistema trabalha para fidelizar seus clientes nos bastidores — enquanto seu time vende normalmente.</p>
+        <a href="#formulario" class="btn btn-lg" style="display:block;width:100%;text-align:center;">Quero ativar o Clube de Fidelidade →</a>
+        <div class="hero-microbadges">
+          <span>🔗 Integrado ao seu Workin — sem instalar nada</span>
+          <span>📲 WhatsApp automático — sem você digitar nada</span>
+          <span>💰 Break-even: 1 cliente de volta por semana</span>
+        </div>
+        <p class="hero-micro-sub">Seu consultor Workin configura tudo em menos de 30 minutos.</p>
+      </div>
+      <div class="hero-card">
+        <p class="hero-card-title">O ciclo que fideliza sozinho</p>
+        <div class="hero-ciclo">
+          <div class="hero-ciclo-item">
+            <div class="hero-ciclo-dot">1</div>
+            <div class="hero-ciclo-text"><strong>Venda realizada</strong><span>Vendedor age normalmente</span></div>
+          </div>
+          <div class="hero-ciclo-item">
+            <div class="hero-ciclo-dot">2</div>
+            <div class="hero-ciclo-text"><strong>Cashback gerado automaticamente</strong><span>Workin calcula nos bastidores</span></div>
+          </div>
+          <div class="hero-ciclo-item">
+            <div class="hero-ciclo-dot">3</div>
+            <div class="hero-ciclo-text"><strong>Cliente recebe aviso no WhatsApp</strong><span>"Seu cashback está disponível"</span></div>
+          </div>
+          <div class="hero-ciclo-item">
+            <div class="hero-ciclo-dot">4</div>
+            <div class="hero-ciclo-text"><strong>Cliente volta. Novo cashback gerado.</strong><span>O ciclo recomeça automaticamente</span></div>
+          </div>
+        </div>
+        <div class="hero-card-badge">
+          <strong>Toda venda é o começo da próxima.</strong>
+          O ciclo se repete venda após venda, cliente após cliente.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section class="numeros">
+  <div class="container">
+    <div class="numeros-grid">
+      <div class="numero-item">
+        <span class="valor">5x</span>
+        <span class="label">mais caro conquistar um cliente novo do que reter quem já comprou</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">70%</span>
+        <span class="label">de chance de vender novamente para quem já é seu cliente</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">8</span>
+        <span class="label">automações de WhatsApp prontas para usar — ativadas em 30 min</span>
+      </div>
+      <div class="numero-item">
+        <span class="valor">100%</span>
+        <span class="label">integrado ao Workin que você já usa hoje</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <h2>Se isso parece familiar, você está deixando dinheiro na mesa toda semana.</h2>
+    <p class="subtitulo">Fidelizar quem já comprou de você custa 5x menos do que conquistar alguém novo. O problema é que sem a ferramenta certa, isso não acontece sozinho.</p>
+    <div class="dores">
+      <div class="dor-item">
+        <span class="icon">😓</span>
+        <p>"Gasto em anúncio toda semana para trazer gente nova — mas o cliente que comprou no mês passado sumiu e não tenho nem como chamá-lo de volta."</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">🔄</span>
+        <p>"Quando penso em fidelizar, a única saída que conheço é dar desconto. E desconto corrói minha margem sem garantir que o cliente volta."</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">🏪</span>
+        <p>"Meus melhores clientes são os que já compraram antes. Mas sem um sistema automático, eles acabam comprando na concorrência — que já tem cashback."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section class="comparativo">
+  <div class="container">
+    <h2>Antes e depois do Clube de Fidelidade</h2>
+    <div class="comparativo-grid">
+      <div class="comparativo-card comparativo-neg">
+        <h3>❌ Sem o módulo</h3>
+        <p>Cliente compra e some</p>
+        <p>Sem contato automático pós-venda</p>
+        <p>Sem dados de comportamento por cliente</p>
+        <p>Gasto constante para atrair clientes novos</p>
+        <p>Desconto como única forma de competir</p>
+      </div>
+      <div class="comparativo-card comparativo-pos">
+        <h3>✅ Com o Clube de Fidelidade</h3>
+        <p>Venda gera cashback — cliente quer voltar usar</p>
+        <p>WhatsApp automático no momento certo</p>
+        <p>Raio-X completo de cada cliente no Workin</p>
+        <p>Recorrência cresce sem aumentar custo de aquisição</p>
+        <p>Cashback como incentivo de retorno — não desconto</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE STACK -->
+<section class="value-stack">
+  <div class="container">
+    <span class="tag">Clube de Fidelidade Workin</span>
+    <h2>O que você recebe ao ativar o módulo</h2>
+    <p class="subtitulo">Quatro recursos integrados ao Workin. Sem contratar mais nada, sem mudar o processo do seu time.</p>
+
+    <div class="beneficios">
+      <div class="beneficio-card">
+        <div class="beneficio-icon">💰</div>
+        <div>
+          <h3>Cashback automático em cada venda</h3>
+          <p class="beneficio-preco">Ferramentas equivalentes separadas: a partir de R$350/mês</p>
+          <p>O Workin calcula e gera o cashback no momento em que a venda é fechada — por produto ou percentual geral. Seu vendedor não muda nada. Seu cliente acumula saldo e fica com um motivo concreto para voltar. Conta corrente completa: histórico, validade por lote e rastreabilidade total.</p>
+        </div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📲</div>
+        <div>
+          <h3>8 automações de WhatsApp prontas para usar</h3>
+          <p class="beneficio-preco">Ferramentas equivalentes separadas: a partir de R$300/mês</p>
+          <p>Cashback gerado. Cashback liberado. Cashback próximo do vencimento. Aniversário. Cliente inativo. Você ativa uma vez. O Workin envia a mensagem certa, para a pessoa certa, no momento certo — automaticamente, 24h por dia, enquanto você faz outra coisa.</p>
+        </div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📊</div>
+        <div>
+          <h3>Raio-X completo de cada cliente</h3>
+          <p class="beneficio-preco">Ferramentas equivalentes separadas: a partir de R$200/mês</p>
+          <p>Selecione qualquer cliente e veja: total gasto, frequência de visitas, ticket médio, produtos que mais compra, data da última compra e saldo de cashback disponível. Informação que você nunca teve — dentro do Workin, sem relatório manual.</p>
+        </div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📢</div>
+        <div>
+          <h3>Campanhas segmentadas de WhatsApp com um clique</h3>
+          <p class="beneficio-preco">Ferramentas equivalentes separadas: a partir de R$200/mês</p>
+          <p>Mande uma mensagem com imagem e link para clientes aniversariantes, para quem não compra há 30 dias, para quem tem cashback disponível. Você escolhe o público — o Workin mostra quantas pessoas vão receber e envia para todas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stack Slide -->
+    <div class="stack-slide">
+      <div class="stack-row"><span class="item"><span class="ck">✓</span> Cashback automático em cada venda</span><span class="preco">equivale a R$350/mês</span></div>
+      <div class="stack-row"><span class="item"><span class="ck">✓</span> 8 automações de WhatsApp prontas</span><span class="preco">equivale a R$300/mês</span></div>
+      <div class="stack-row"><span class="item"><span class="ck">✓</span> Raio-X completo de cada cliente</span><span class="preco">equivale a R$200/mês</span></div>
+      <div class="stack-row"><span class="item"><span class="ck">✓</span> Campanhas segmentadas de WhatsApp</span><span class="preco">equivale a R$200/mês</span></div>
+      <div class="stack-row"><span class="item"><span class="ck">✓</span> Setup feito pelo seu consultor Workin</span><span class="preco">equivale a R$500 (único)</span></div>
+      <hr class="stack-divider" />
+      <div class="stack-total">
+        <div class="label"><del>Valor total das ferramentas separadas: R$1.550/mês + R$500 setup</del> Integrado ao Workin. Sem contratos extras.</div>
+        <div class="stack-preco-final"><span class="valor">R$150</span><span class="detalhe">/mês</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="roi">
+  <div class="container">
+    <h2>Quanto você precisa vender a mais para pagar o módulo?</h2>
+    <p class="subtitulo">Fizemos a conta com os números de um lojista real. O resultado vai surpreender você.</p>
+
+    <div class="roi-box">
+      <p class="roi-box-title">Cenário conservador — varejo com ticket médio de R$280</p>
+      <div class="roi-linha"><span class="desc">Clientes que voltam a mais por semana (conservador)</span><span class="val">2</span></div>
+      <div class="roi-linha"><span class="desc">Em 1 mês: visitas extras</span><span class="val">8</span></div>
+      <hr class="roi-divider" />
+      <div class="roi-linha"><span class="desc">8 visitas × R$280 de ticket médio</span><span class="val">R$2.240</span></div>
+      <div class="roi-linha"><span class="desc">R$2.240 × 35% de margem bruta</span><span class="val">R$784 lucro extra</span></div>
+      <hr class="roi-divider" />
+      <div class="roi-linha custo"><span class="desc">Custo do módulo</span><span class="val">− R$150/mês</span></div>
+      <div class="roi-linha lucro"><span class="desc">Resultado líquido extra</span><span class="val">+ R$634/mês</span></div>
+      <hr class="roi-divider" />
+      <div class="roi-linha resultado"><span class="desc">Retorno sobre o investimento</span><span class="val">422%</span></div>
+    </div>
+
+    <div class="roi-break">
+      <strong>Break-even: 1 cliente de volta por semana.</strong>
+      Com ticket médio de R$280 e margem de 35%, 4 visitas extras no mês já cobrem o investimento inteiro. A partir daí, tudo é lucro.
+    </div>
+
+    <div class="roi-vs">
+      <p class="roi-vs-titulo">Clube de Fidelidade vs. Anúncios para trazer o mesmo cliente</p>
+      <div class="roi-vs-grid">
+        <div class="roi-vs-card roi-vs-neg">
+          <h4>❌ Anúncio no Meta</h4>
+          <p>Custo por lead: R$50 – R$120</p>
+          <p>Cliente que ainda não te conhece</p>
+          <p>Sem garantia de compra</p>
+          <p>Custo se repete a cada vez</p>
+        </div>
+        <div class="roi-vs-card roi-vs-pos">
+          <h4>✅ Clube de Fidelidade</h4>
+          <p>Custo de mídia para reativação: R$0</p>
+          <p>Cliente que já confia em você</p>
+          <p>Motivo concreto para voltar (cashback)</p>
+          <p>Ciclo automático, venda após venda</p>
+        </div>
+      </div>
+    </div>
+
+    <br />
+    <a href="#formulario" class="btn btn-lg">Quero calcular o retorno para o meu negócio →</a>
+    <p style="color:#6de0a0;font-size:0.82rem;margin-top:10px;opacity:0.85;">Seu consultor Workin mostra a projeção com o seu ticket médio real.</p>
+  </div>
+</section>
+
+<!-- PREÇO -->
+<section class="preco-secao">
+  <div class="container">
+    <h2>Tudo isso por R$150/mês.</h2>
+    <div class="preco-box">
+      <div class="preco-valor">R$150 <span>/ mês</span></div>
+      <p class="preco-detalhe">Menos de R$5 por dia. Adicionado à sua assinatura Workin atual.</p>
+      <p class="preco-copy">
+        Cashback automático em cada venda, 8 automações de WhatsApp, raio-X completo dos seus clientes e campanhas segmentadas — tudo integrado ao Workin que você já usa.<br><br>
+        Se o módulo não trouxer pelo menos 4 clientes de volta no primeiro mês, o investimento não se pagou. Se trouxer 8, você já está no lucro. A partir de 10, o retorno passa de 400%.<br><br>
+        <strong>Não existe desconto aqui, nem prazo artificial.</strong> O preço é R$150/mês porque é o que faz sentido para o valor que entrega. Você cancela quando quiser, sem multa e sem burocracia.
+      </p>
+      <p class="preco-nota">O cashback não é desconto dado na hora da compra — é saldo que o cliente acumula e usa na próxima visita. Você define o percentual que faz sentido para sua margem. O custo do módulo é R$150/mês, independente do percentual escolhido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="fluxo">
+  <div class="container">
+    <h2>Como funciona no dia a dia</h2>
+    <p class="subtitulo">O vendedor não muda nada. O Workin cuida de tudo nos bastidores.</p>
+    <div class="fluxo-steps">
+      <div class="fluxo-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Venda realizada normalmente no Workin</strong>
+          <span>Vendedor finaliza a venda no PDV, NF-e ou OS como sempre fez. Nenhuma etapa adicional.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Cashback gerado e registrado automaticamente</strong>
+          <span>Workin calcula o valor conforme a campanha configurada e registra na conta corrente do cliente com validade definida por você.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Cliente recebe aviso pelo WhatsApp — automático</strong>
+          <span>Quando o cashback fica disponível, o sistema envia: "Seu cashback de R$ X está disponível!" sem você fazer nada.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Cliente volta e usa o cashback como pagamento</strong>
+          <span>O vendedor seleciona "Cashback" como forma de pagamento. Sistema debita automaticamente e já gera novo cashback na mesma venda.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Você acompanha tudo no painel de gestão</strong>
+          <span>Cashback gerado, utilizado, expirado. Clientes mais fiéis. Extrato completo por cliente. Tudo auditável dentro do Workin.</span>
+        </div>
+      </div>
+    </div>
+    <div class="integracao">
+      <div class="integracao-icon">🔗</div>
+      <p><strong>Integração fiscal e financeira completa.</strong> O cashback entra na NF-e com o código fiscal correto (tPag=19 — conforme tabela SEFAZ). O custo é reconhecido como despesa de fidelização no seu DRE. Nenhuma mudança na base de cálculo de impostos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="formulario">
+  <div class="container">
+    <h2>Ative o Clube de Fidelidade no seu Workin</h2>
+    <p class="subtitulo">Preencha abaixo e seu consultor mostra como configurar o módulo e projeta o retorno para o seu negócio.</p>
+    <div class="form-box">
+      <form id="lead-form" novalidate>
+        <div class="form-group">
+          <label for="fullName">Nome Completo *</label>
+          <input type="text" id="fullName" name="fullName" placeholder="João Silva" required />
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro">Por favor, preencha todos os campos corretamente.</div>
+        <div id="msg-sucesso">Recebido! Seu consultor Workin vai entrar em contato em breve.</div>
+        <button type="submit" class="btn btn-submit">Quero ativar o Clube de Fidelidade →</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados. Sem spam.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="prova">
+  <div class="container">
+    <h2>Clientes que ativaram já percebem a diferença</h2>
+    <div class="depoimento">
+      <blockquote>
+        "Sempre soube que fidelizar era mais barato do que atrair cliente novo, mas nunca tive uma ferramenta que fizesse isso automático dentro do próprio sistema. Com o Clube de Fidelidade, meus clientes voltam mais — e o vendedor não muda nada no processo."
+      </blockquote>
+      <cite>⭐⭐⭐⭐⭐ — Cliente Workin · Loja de moda feminina</cite>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-lista">
+
+      <details>
+        <summary>Preciso instalar algo ou migrar dados para ativar o módulo?</summary>
+        <p>Não. O Clube de Fidelidade é ativado diretamente no seu Workin atual — sem instalação, sem migração. Seu consultor configura percentual de cashback, carência e automações de WhatsApp em menos de 30 minutos. O cashback começa a acumular a partir da primeira venda após a ativação.</p>
+      </details>
+
+      <details>
+        <summary>E se eu não tiver margem para dar cashback?</summary>
+        <p>O percentual é totalmente configurável — 1%, 2%, 3% ou o que fizer sentido para o seu negócio. E o cashback não é desconto dado na hora: é saldo que o cliente acumula e usa na próxima compra. O custo real só aparece quando ele volta para resgatar — e quando isso acontece, você está fechando uma nova venda. O módulo custa R$150/mês independente do percentual que você escolher.</p>
+      </details>
+
+      <details>
+        <summary>Quanto tempo até eu ver o primeiro resultado?</summary>
+        <p>O cashback começa a ser gerado na primeira venda após a ativação. Com a carência padrão de 7 dias, o cliente já recebe o aviso de WhatsApp na primeira semana. Os primeiros retornos acontecem entre 7 e 14 dias após ativar. Para pagar o módulo inteiro, basta 1 cliente voltar por semana — o que, na maioria dos varejos, acontece ainda no primeiro mês.</p>
+      </details>
+
+      <details>
+        <summary>O cashback afeta a emissão das notas fiscais?</summary>
+        <p>Não altera nada na base de cálculo de impostos. Quando o cliente usa o cashback como pagamento, o valor entra no grupo de pagamento da NF-e com o código fiscal correto (tPag=19 — Programa de Fidelidade, Cashback, Crédito Virtual, conforme a tabela da SEFAZ). A tributação sobre os produtos permanece exatamente igual.</p>
+      </details>
+
+      <details>
+        <summary>O vendedor precisa fazer algo diferente durante a venda?</summary>
+        <p>Não. A geração de cashback é automática — o vendedor finaliza a venda normalmente. A única diferença acontece quando o cliente quer usar o saldo acumulado: o vendedor seleciona "Cashback" como forma de pagamento, igual a qualquer outra. O sistema faz todo o restante.</p>
+      </details>
+
+      <details>
+        <summary>O módulo funciona para qualquer segmento que o Workin atende?</summary>
+        <p>Sim. O Clube de Fidelidade funciona para todos os segmentos: varejo de moda, calçados, materiais de construção, auto peças, informática, lanchonetes, mercados e outros. O percentual de cashback e as campanhas são configuráveis por produto ou regra geral, adaptando-se a qualquer tipo de negócio.</p>
+      </details>
+
+      <details>
+        <summary>O módulo de WhatsApp precisa de alguma contratação adicional?</summary>
+        <p>As automações funcionam via WAHA — a mesma integração WhatsApp que o Workin já usa. Se você já envia mensagens pelo Workin hoje, as automações do Clube de Fidelidade funcionam na mesma sessão. Para campanhas de broadcast em volume, existe um limite mensal de mensagens incluído — seu consultor explica os detalhes conforme o seu plano.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <p class="cta-eyebrow">Módulo disponível agora no seu Workin</p>
+    <h2>Toda venda é o começo<br>da próxima.</h2>
+    <p>Cada compra que acontece na sua loja hoje pode garantir a próxima — automaticamente. Ative o Clube de Fidelidade e o Workin cuida do restante.</p>
+    <a href="#formulario" class="btn btn-lg btn-branco">Quero ativar no meu Workin →</a>
+    <p class="cta-micro">Seu consultor configura tudo em 30 minutos. Sem custo de setup.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+    <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+    <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+    <p><a href="/politica-de-privacidade.html">Política de Privacidade</a> · <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a></p>
+  </div>
+</footer>
+
+<script>
+  const CONFIG = {
+    WEBHOOK_URL: 'https://services.leadconnectorhq.com/hooks/OOQ8MYkXPEJqbh0mej19/webhook-trigger/Eodg04HN60DrOvSQjT3r',
+    REDIRECT_URL: '/obrigado-clube-fidelidade.html',
+    UTM_CAMPAIGN_DEFAULT: 'clube-fidelidade-upsell',
+  };
+
+  function capturaUTMs() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   params.get('utm_source')   || 'direto',
+      utm_medium:   params.get('utm_medium')   || 'organico',
+      utm_campaign: params.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  params.get('utm_content')  || '',
+      utm_term:     params.get('utm_term')     || '',
+    };
+  }
+
+  const phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) { v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3'); }
+    else { v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3'); }
+    this.value = v;
+  });
+
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  document.getElementById('lead-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const msgErro = document.getElementById('msg-erro');
+    const msgOk   = document.getElementById('msg-sucesso');
+    const utms = capturaUTMs();
+    const nomeCompleto = document.getElementById('fullName').value.trim();
+    const partes = nomeCompleto.split(' ');
+    const dados = {
+      firstName: partes[0] || '',
+      lastName:  partes.slice(1).join(' ') || '',
+      email:     document.getElementById('email').value.trim().toLowerCase(),
+      phone:     document.getElementById('phone').value.replace(/\D/g, ''),
+      modulo:    'clube-fidelidade',
+      tipo_lead: 'upsell-cliente-ativo',
+      ...utms,
+    };
+    msgErro.style.display = 'none';
+    msgOk.style.display   = 'none';
+    if (!valida(dados)) { msgErro.style.display = 'block'; return; }
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando...';
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+      window.location.href = CONFIG.REDIRECT_URL;
+    } catch (err) {
+      msgOk.style.display   = 'block';
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Quero ativar o Clube de Fidelidade →';
+    }
+  });
+</script>
+
+</body>
+</html>

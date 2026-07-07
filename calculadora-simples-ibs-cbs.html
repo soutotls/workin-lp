@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Simule se vale a pena recolher IBS/CBS por dentro ou por fora do Simples Nacional na Reforma Tributária. Ferramenta gratuita Workin para contadores e empresas." />
+<title>Simulador Simples Nacional × Reforma Tributária — Workin</title>
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="apple-touch-icon" href="favicon.png" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Vale a pena recolher IBS e CBS por fora do Simples Nacional?" />
+<meta property="og:description" content="Simulador gratuito Workin: compare a carga própria e o crédito repassado ao cliente entre manter o IBS/CBS por dentro do DAS ou apurá-los por fora." />
+<meta property="og:image" content="https://lp.sistemaworkin.com.br/og-calculadora-reforma-tributaria.jpg" />
+<meta property="og:type" content="website" />
+
+<style>
+  /* Tema claro fixo — simulador com fundo claro em qualquer preferência do sistema. */
+  :root, :root[data-theme="light"], :root[data-theme="dark"] {
+    color-scheme: light;
+    --ground: #f4f7f4;
+    --surface: #ffffff;
+    --surface-2: #eef2ee;
+    --ink: #22253A;         /* azul escuro Workin */
+    --muted: #5c6b73;
+    --hair: #dde4df;
+    --accent: #00AD50;      /* verde Workin — por fora */
+    --accent-dark: #008a3f;
+    --accent-soft: #e2f5ea;
+    --brand: #22253A;       /* azul escuro Workin — por dentro */
+    --brand-soft: #e8e9ee;
+    --pos: #00AD50;
+    --warn: #b45309;
+    --neg: #b3261e;
+    --shadow: 0 1px 2px rgba(34,37,58,.06), 0 8px 24px -12px rgba(34,37,58,.18);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: 'Segoe UI', -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+
+  /* ---- header de marca ---- */
+  .site-header {
+    background: var(--brand); padding: 18px 0; text-align: center;
+    border-bottom: 3px solid var(--accent);
+  }
+  .site-header img { height: 52px; margin: 0 auto; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 36px) 64px; }
+
+  header.hero-text { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 0 0 8px;
+  }
+  h1 {
+    font-size: clamp(24px, 4vw, 34px); line-height: 1.15; margin: 0 0 10px;
+    letter-spacing: -.02em; text-wrap: balance; font-weight: 700;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0; font-size: 15.5px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: 14px; box-shadow: var(--shadow);
+  }
+
+  /* ---- inputs ---- */
+  .inputs { padding: clamp(18px, 3vw, 26px); margin: 24px 0; }
+  .grid {
+    display: grid; gap: 18px 22px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  label { font-size: 13.5px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .hint { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+  .note { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 0; }
+  .control {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--hair); border-radius: 9px;
+    background: var(--surface-2); padding: 0 12px; height: 44px;
+    transition: border-color .12s, box-shadow .12s;
+  }
+  .control:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .control .affix { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+  input, select {
+    border: 0; background: transparent; color: var(--ink);
+    font: inherit; width: 100%; outline: none; height: 100%;
+  }
+  input[type="number"] { font-variant-numeric: tabular-nums; }
+  select { cursor: pointer; color: var(--ink); -webkit-appearance: none; appearance: none; }
+  select option { color: #22253A; background: #ffffff; }
+  .selectwrap { position: relative; }
+  /* dropdown customizado (cores Workin) — o <select> nativo fica oculto como fonte do valor */
+  .csel-native { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .csel-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    width: 100%; height: 100%; padding: 0; border: 0; background: transparent;
+    color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+  }
+  .csel-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .csel-chev { flex: 0 0 auto; color: var(--muted); font-size: 12px; transition: transform .15s; }
+  .selectwrap.open .csel-chev { transform: rotate(180deg); }
+  .csel-list {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 40;
+    display: none; padding: 5px; max-height: 300px; overflow-y: auto;
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: 11px; box-shadow: var(--shadow);
+  }
+  .selectwrap.open .csel-list { display: block; }
+  .csel-opt {
+    padding: 9px 11px; border-radius: 7px; font-size: 13.5px; line-height: 1.35;
+    color: var(--ink); cursor: pointer; white-space: normal;
+  }
+  .csel-opt:hover { background: var(--surface-2); }
+  .csel-opt[aria-selected="true"] { background: var(--accent); color: #fff; font-weight: 600; }
+  .csel-opt[aria-selected="true"]:hover { background: var(--accent); }
+
+  /* ---- tabela do Simples ---- */
+  details.tables { margin-top: 18px; border-top: 1px solid var(--hair); padding-top: 4px; }
+  details.tables > summary {
+    list-style: none; cursor: pointer; padding: 12px 2px 4px;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  details.tables > summary::-webkit-details-marker { display: none; }
+  details.tables > summary .chev { transition: transform .15s; display: inline-block; }
+  details.tables[open] > summary .chev { transform: rotate(90deg); }
+  .stbl-atv {
+    font-size: 12.5px; color: var(--ink); line-height: 1.5; margin: 12px 2px 10px;
+    padding: 11px 14px; background: var(--accent-soft); border-radius: 8px;
+  }
+  .stbl-atv .atv-k {
+    display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--accent); font-weight: 600; margin-bottom: 3px;
+  }
+  .stbl-cap { font-size: 12.5px; color: var(--muted); margin: 10px 2px 12px; line-height: 1.5; }
+  .stbl-cap strong { color: var(--ink); }
+  .tblscroll { overflow-x: auto; }
+  table.stbl { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 13px; }
+  table.stbl th, table.stbl td { padding: 9px 12px; text-align: right; white-space: nowrap; }
+  table.stbl th:first-child, table.stbl td:first-child { text-align: left; }
+  table.stbl thead th {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+    border-bottom: 1.5px solid var(--hair); font-weight: 600;
+  }
+  table.stbl tbody td { border-bottom: 1px solid var(--hair); font-variant-numeric: tabular-nums; }
+  table.stbl tbody tr.on td { background: var(--accent-soft); }
+  table.stbl tbody tr.on td:first-child { font-weight: 700; color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+
+  .comp { margin-top: 16px; padding: 15px 16px; border: 1px solid var(--hair); border-radius: 10px; background: var(--surface-2); }
+  .comp-h { font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+  .comp-eq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; font-size: 13.5px; color: var(--ink); }
+  .comp-eq b { font-variant-numeric: tabular-nums; }
+  .comp-eq i { color: var(--muted); font-style: normal; font-size: 11.5px; }
+  .comp-eq .op { color: var(--muted); font-weight: 700; }
+  .comp-tot { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; font-size: 15px; }
+  .comp-note { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin: 11px 0 0; }
+  .comp-note strong { color: var(--ink); }
+
+  /* ---- banner do ano ---- */
+  .yearctx {
+    margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+    padding: 14px 18px; border: 1px solid var(--hair); border-radius: 12px;
+    background: var(--surface); box-shadow: var(--shadow);
+  }
+  .yearctx .yr {
+    font-size: 20px; font-weight: 700; letter-spacing: -.02em; color: var(--accent);
+    font-variant-numeric: tabular-nums; padding-right: 16px; border-right: 1px solid var(--hair);
+  }
+  .yearctx .yc-item { display: flex; flex-direction: column; gap: 1px; }
+  .yearctx .yc-k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .yearctx .yc-v { font-size: 13.5px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .yearctx .yc-note { flex: 1 1 200px; font-size: 12px; color: var(--muted); text-align: right; min-width: 160px; }
+
+  /* ---- results ---- */
+  .compare { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; margin-top: 22px; }
+  @media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+
+  .scenario { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .scenario .top { padding: 20px 22px 16px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--accent);
+  }
+  .scenario.dentro .tag { color: var(--brand); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .scenario h2 { font-size: 18px; margin: 8px 0 2px; letter-spacing: -.01em; }
+  .scenario .sub { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+  .metrics { display: flex; gap: 8px; padding: 4px 22px 18px; flex-wrap: wrap; }
+  .metric { flex: 1 1 130px; }
+  .metric .k { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .metric .v {
+    font-size: clamp(20px, 3vw, 25px); font-weight: 700; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums; margin-top: 2px;
+  }
+  .metric .pct { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  details.memo { border-top: 1px solid var(--hair); margin-top: auto; }
+  details.memo > summary {
+    list-style: none; cursor: pointer; padding: 13px 22px;
+    font-size: 12.5px; font-weight: 600; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  details.memo > summary::-webkit-details-marker { display: none; }
+  details.memo > summary .chev { transition: transform .15s; }
+  details.memo[open] > summary .chev { transform: rotate(90deg); }
+  .ledger {
+    font-family: var(--mono); font-size: 12px; line-height: 1.5;
+    padding: 4px 22px 20px; color: var(--ink);
+  }
+  .lrow { display: flex; justify-content: space-between; gap: 16px; padding: 5px 0; align-items: baseline; }
+  .lrow .lbl { color: var(--muted); flex: 0 0 auto; max-width: 42%; }
+  .lrow .expr { text-align: right; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
+  .lrow.total { border-top: 1px dashed var(--hair); margin-top: 4px; padding-top: 8px; font-weight: 600; }
+  .lrow.total .lbl { color: var(--ink); }
+  .lnote { color: var(--muted); font-size: 11px; margin-top: 8px; font-family: var(--sans); }
+
+  /* ---- verdict ---- */
+  .verdict { margin-top: 22px; padding: 22px clamp(18px,3vw,26px); }
+  .verdict h3 { margin: 0 0 14px; font-size: 15px; letter-spacing: .01em; }
+  .vgrid { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 560px) { .vgrid { grid-template-columns: 1fr; } }
+  .vcard { border: 1px solid var(--hair); border-radius: 10px; padding: 14px 16px; background: var(--surface-2); }
+  .vcard .k { font-size: 12px; color: var(--muted); }
+  .vcard .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 3px; letter-spacing: -.01em; }
+  .vcard .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .v-pos { color: var(--pos); } .v-neg { color: var(--neg); } .v-warn { color: var(--warn); }
+  .takeaway {
+    margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+    background: var(--accent-soft); color: var(--ink); font-size: 13.5px; line-height: 1.55;
+  }
+  .takeaway strong { color: var(--accent); }
+
+  .alert {
+    display: none; margin-top: 22px; padding: 16px 20px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--hair); color: var(--ink); font-size: 14px;
+  }
+  .alert.show { display: block; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px; margin-bottom: 12px;
+    padding: 5px 11px 5px 9px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  }
+  .badge .mk { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .simnote {
+    margin-top: 14px; padding: 11px 15px; border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--ink); line-height: 1.5;
+  }
+
+  /* ---- caveats ---- */
+  .caveats { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--hair); }
+  .caveats h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
+  .caveats ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .caveats li { font-size: 12.5px; color: var(--muted); line-height: 1.5; padding-left: 22px; position: relative; }
+  .caveats li::before { content: "⚠"; position: absolute; left: 0; top: 0; color: var(--warn); }
+  .caveats li.ref::before { content: "§"; color: var(--accent); font-weight: 700; }
+
+  /* ---- CTA Workin ---- */
+  .cta-workin { margin-top: 30px; padding: clamp(22px, 4vw, 34px); text-align: center; background: var(--brand); border: none; }
+  .cta-workin .cta-eyebrow {
+    font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+    color: var(--accent); margin: 0 0 10px;
+  }
+  .cta-workin h3 { color: #fff; font-size: clamp(19px, 3vw, 24px); margin: 0 0 8px; letter-spacing: -.01em; }
+  .cta-workin p { color: #c7cbd6; max-width: 56ch; margin: 0 auto 20px; font-size: 14px; line-height: 1.55; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff;
+    font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 8px;
+    border: none; cursor: pointer; transition: background .15s;
+  }
+  .btn:hover { background: var(--accent-dark); }
+
+  /* ---- modal ---- */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(23,28,42,.55); align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    position: relative; width: 100%; max-width: 420px; background: var(--surface);
+    border-radius: 16px; padding: 30px 26px 26px; box-shadow: 0 24px 60px -12px rgba(23,28,42,.35);
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%;
+    border: none; background: var(--surface-2); color: var(--muted); font-size: 18px; line-height: 1;
+    cursor: pointer;
+  }
+  .modal-close:hover { background: var(--hair); }
+  .modal-box h3 { font-size: 18px; margin: 0 0 6px; color: var(--ink); letter-spacing: -.01em; }
+  .modal-sub { font-size: 13px; color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
+  .modal-box .field { margin-bottom: 14px; }
+  .modal-box label { font-size: 12.5px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 5px; }
+  .modal-box input {
+    width: 100%; padding: 12px 13px; border: 1.5px solid var(--hair); border-radius: 8px;
+    font: inherit; font-size: 14px; color: var(--ink); background: var(--surface-2);
+  }
+  .modal-box input:focus { outline: none; border-color: var(--accent); }
+  .modal-box .btn { width: 100%; justify-content: center; margin-top: 4px; }
+  .form-msg { display: none; font-size: 12.5px; margin: 10px 0; padding: 9px 12px; border-radius: 7px; }
+  .form-msg.erro { background: #fbeaea; color: var(--neg); }
+  .form-msg.show { display: block; }
+  .form-legal { font-size: 11px; color: var(--muted); margin-top: 12px; line-height: 1.4; text-align: center; }
+  .modal-sucesso { text-align: center; padding: 8px 0 4px; }
+  .modal-sucesso h3 { margin-bottom: 8px; }
+  .modal-sucesso p { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 20px; }
+  .modal-sucesso .btn { background: var(--brand); }
+  .modal-sucesso .btn:hover { background: #2c2f47; }
+
+  /* ---- footer de marca ---- */
+  .site-footer {
+    margin-top: 10px; padding: 30px 20px 40px; text-align: center;
+    font-size: 12px; color: var(--muted); line-height: 1.7;
+  }
+  .site-footer a { text-decoration: underline; }
+  footer.site-footer { max-width: 1200px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div>
+    <img src="logo-workin-negativa-header.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<div class="wrap">
+  <header class="hero-text">
+    <span class="badge"><span class="mk"></span>Simulador</span>
+    <p class="eyebrow">Reforma Tributária · Simples Nacional</p>
+    <h1>Vale a pena recolher IBS e CBS por fora?</h1>
+    <p class="lede">Simulação rápida para o optante do Simples decidir entre manter o IBS/CBS <strong>por dentro do DAS</strong> (regime único) ou apurá-los <strong>por fora</strong>, pelo regime regular. Compare a carga própria e o crédito repassado ao cliente — com a memória de cálculo aberta.</p>
+    <p class="simnote"><strong>Isto é um simulador.</strong> Os números são <strong>estimativas</strong> para apoiar a decisão — não representam apuração oficial nem substituem a orientação do contador.</p>
+  </header>
+
+  <section class="card inputs">
+    <div class="grid">
+      <div class="field">
+        <label for="seg">Segmento <span class="hint">(define o Anexo)</span></label>
+        <div class="selectwrap control">
+          <select id="seg">
+            <option value="I">Comércio — Anexo I (revenda de mercadorias)</option>
+            <option value="II">Indústria — Anexo II (fabricação)</option>
+            <option value="III">Serviços — Anexo III (instalação, reparo, beleza…)</option>
+            <option value="IV">Serviços — Anexo IV (construção, limpeza, advocacia)</option>
+            <option value="V">Serviços — Anexo V (TI, engenharia, consultoria)</option>
+          </select>
+        </div>
+        <p class="note">Atividade da empresa. Cada segmento cai em um <strong>Anexo</strong> do Simples, que tem sua própria tabela de alíquotas.</p>
+      </div>
+      <div class="field">
+        <label for="ano">Ano-base <span class="hint">(transição)</span></label>
+        <div class="selectwrap control">
+          <select id="ano">
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033 em diante (transição concluída)</option>
+          </select>
+        </div>
+        <p class="note">Durante a transição o IBS/CBS entra em partes: <strong>CBS integral já em 2027</strong>; o IBS sobe 10% ao ano de 2029 a 2032 e chega a 100% em <strong>2033</strong>.</p>
+      </div>
+      <div class="field">
+        <label for="fat">Faturamento mensal</label>
+        <div class="control"><span class="affix">R$</span><input id="fat" type="number" min="0" step="100" value="50000" inputmode="decimal"></div>
+        <p class="note">Receita bruta de vendas no mês. Multiplicado por 12 forma o <strong>RBT12</strong>, que define a faixa e a alíquota efetiva.</p>
+      </div>
+      <div class="field">
+        <label for="cmp">Custo de compras <span class="hint">(mercadorias + insumos)</span></label>
+        <div class="control"><span class="affix">R$</span><input id="cmp" type="number" min="0" step="100" value="20000" inputmode="decimal"></div>
+        <p class="note">Gasto mensal com fornecedores. Só gera <strong>crédito</strong> de IBS/CBS no cenário "por fora"; no "por dentro" não há crédito das compras.</p>
+      </div>
+      <div class="field">
+        <label for="iva">IVA Dual (IBS + CBS)</label>
+        <div class="control"><input id="iva" type="number" min="0" step="0.1" value="26.5" inputmode="decimal"><span class="affix">%</span></div>
+        <p class="note">Alíquota somada de IBS + CBS aplicada no regime regular. Padrão <strong>26,5%</strong> (referência); ajuste conforme a alíquota estimada.</p>
+      </div>
+      <div class="field">
+        <label for="frac">Fração do DAS substituída <span class="hint">(por IBS/CBS · editável)</span></label>
+        <div class="control"><input id="frac" type="number" min="0" max="100" step="0.5" value="49.5" inputmode="decimal"><span class="affix">%</span></div>
+        <p class="note">Quanto do DAS corresponde a PIS/COFINS/ICMS/ISS — os tributos que o IBS/CBS substituem. É o que <strong>sai do DAS</strong> ao ir "por fora". Proxy da LC 123, editável.</p>
+      </div>
+    </div>
+
+    <details class="tables" id="tablesPanel">
+      <summary>Ver a tabela do Simples deste segmento <span class="chev">›</span></summary>
+      <div id="tableBox"></div>
+    </details>
+  </section>
+
+  <div id="alert" class="alert"></div>
+
+  <div id="yearctx" class="yearctx"></div>
+
+  <section id="results" class="compare">
+    <article class="scenario dentro card">
+      <div class="top">
+        <span class="tag"><span class="dot"></span>Situação 1</span>
+        <h2>Por dentro do DAS</h2>
+        <p class="sub">Regime único do Simples — como é hoje</p>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="k">Carga própria</div>
+          <div class="v" id="d-carga">—</div>
+          <div class="pct" id="d-carga-pct"></div>
+        </div>
+        <div class="metric">
+          <div class="k">Crédito ao cliente</div>
+          <div class="v" id="d-cred">—</div>
+          <div class="pct">limitado (§9 II)</div>
+        </div>
+      </div>
+      <details class="memo">
+        <summary>Memória de cálculo <span class="chev">›</span></summary>
+        <div class="ledger" id="d-memo"></div>
+      </details>
+    </article>
+
+    <article class="scenario fora card">
+      <div class="top">
+        <span class="tag"><span class="dot"></span>Situação 2</span>
+        <h2>Por fora (regime regular)</h2>
+        <p class="sub">Opção do art. 41 §3 — IBS/CBS apartados do DAS</p>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="k">Carga própria</div>
+          <div class="v" id="f-carga">—</div>
+          <div class="pct" id="f-carga-pct"></div>
+        </div>
+        <div class="metric">
+          <div class="k">Crédito ao cliente</div>
+          <div class="v" id="f-cred">—</div>
+          <div class="pct">integral</div>
+        </div>
+      </div>
+      <details class="memo">
+        <summary>Memória de cálculo <span class="chev">›</span></summary>
+        <div class="ledger" id="f-memo"></div>
+      </details>
+    </article>
+  </section>
+
+  <section class="card verdict" id="verdict">
+    <h3>Veredito da simulação</h3>
+    <div class="vgrid">
+      <div class="vcard">
+        <div class="k">Diferença na carga própria (por fora − por dentro)</div>
+        <div class="v" id="v-carga">—</div>
+        <div class="desc" id="v-carga-d"></div>
+      </div>
+      <div class="vcard">
+        <div class="k">Crédito adicional ao cliente</div>
+        <div class="v" id="v-cred">—</div>
+        <div class="desc" id="v-cred-d"></div>
+      </div>
+    </div>
+    <div class="takeaway" id="takeaway"></div>
+  </section>
+
+  <!-- CTA WORKIN -->
+  <section class="card cta-workin">
+    <h3>Precisa de um ERP consistente?</h3>
+    <p>Fiscal, financeiro e vendas em um único sistema — pronto para a transição do IBS/CBS desde já, sem depender de planilha.</p>
+    <button type="button" class="btn" id="ctaAbrirModal">Clique aqui e saiba mais →</button>
+  </section>
+
+  <section class="caveats">
+    <h4>O que esta simulação assume</h4>
+    <ul>
+      <li>As regras do Simples na Reforma valem <strong>a partir de 2027</strong> e ainda dependem de regulamentação do Comitê Gestor do Simples. As frações e o crédito limitado são <strong>estimativas</strong>.</li>
+      <li>A "fração do DAS substituída" é um <strong>proxy da partilha da LC 123</strong> (PIS+COFINS+ICMS/ISS), não da regulamentação final — por isso é editável.</li>
+      <li>A opção "por fora" tem <strong>efeito de permanência</strong> — não é reversível a qualquer momento.</li>
+      <li>Não modela MEI, split payment, IPI/Imposto Seletivo, regimes diferenciados nem o mix B2B/B2C por cliente.</li>
+      <li class="ref">Base legal: art. 41 §§1º–5º da LC 214/2025; regra de crédito ao adquirente no §9 (redação da LC 227/2026).</li>
+      <li class="ref"><strong>Não substitui a orientação do contador</strong> — a decisão depende da sua carteira de clientes.</li>
+    </ul>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:18px;">Ferramenta de apoio à decisão · valores em reais por mês · alíquota efetiva pela tabela vigente do Simples Nacional (Anexos I–V).</p>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+  <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+  <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+  <p><a href="/politica-de-privacidade.html">Política de Privacidade</a> · <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a></p>
+</footer>
+
+<!-- MODAL LEAD -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="modal-close" id="modalClose" aria-label="Fechar">×</button>
+
+    <div id="modalFormWrap">
+      <h3 id="modalTitle">Fale com a Workin</h3>
+      <p class="modal-sub">Deixe seu contato — o time Workin explica como o sistema se prepara para a reforma tributária.</p>
+      <form id="lead-form" novalidate>
+        <div class="field">
+          <label for="fullName">Nome completo *</label>
+          <input type="text" id="fullName" name="fullName" placeholder="João Silva" required />
+        </div>
+        <div class="field">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="field">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro" class="form-msg erro">Por favor, preencha todos os campos corretamente.</div>
+        <button type="submit" class="btn" id="btnSubmit">Quero saber mais →</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados. Sem spam.</p>
+      </form>
+    </div>
+
+    <div id="modalSucesso" class="modal-sucesso" hidden>
+      <h3>Recebemos seu contato!</h3>
+      <p>O time Workin vai falar com você em breve. Pode continuar usando a calculadora normalmente.</p>
+      <button type="button" class="btn" id="btnFecharSucesso">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Tabelas do Simples Nacional (LC 123, Anexos I–V) — [limite RBT12, alíquota nominal, parcela a deduzir]
+  // frac = cbs (PIS+COFINS) + ibs (ICMS ou ISS), da repartição da LC 123 na 1ª faixa.
+  var ANEXOS = {
+    I:   { nome: "Comércio (Anexo I)", cbs: 15.5, ibs: 34.0, ibsNome: "ICMS", frac: 49.5,
+           atv: "Revenda de mercadorias em geral (lojas, mercados, atacado, varejo).", faixas: [
+            [180000, 0.040, 0], [360000, 0.073, 5940], [720000, 0.095, 13860],
+            [1800000, 0.107, 22500], [3600000, 0.143, 87300], [4800000, 0.190, 378000] ] },
+    II:  { nome: "Indústria (Anexo II)", cbs: 14.0, ibs: 32.0, ibsNome: "ICMS", frac: 46.0,
+           atv: "Indústria e fabricação de produtos (transformação, montagem, industrialização).", faixas: [
+            [180000, 0.045, 0], [360000, 0.078, 5940], [720000, 0.100, 13860],
+            [1800000, 0.112, 22500], [3600000, 0.147, 85500], [4800000, 0.300, 720000] ] },
+    III: { nome: "Serviços (Anexo III)", cbs: 15.6, ibs: 33.5, ibsNome: "ISS", frac: 49.1,
+           atv: "Serviços de instalação, manutenção e reparo, agências de viagem, salões de beleza, academias, laboratórios, escritórios de contabilidade, transporte municipal — e serviços intelectuais com fator “r” ≥ 28%.", faixas: [
+            [180000, 0.060, 0], [360000, 0.112, 9360], [720000, 0.135, 17640],
+            [1800000, 0.160, 35640], [3600000, 0.210, 125640], [4800000, 0.330, 648000] ] },
+    IV:  { nome: "Serviços (Anexo IV)", cbs: 21.5, ibs: 44.5, ibsNome: "ISS", frac: 66.0,
+           atv: "Construção civil e obras, limpeza, vigilância e conservação, e serviços advocatícios. A contribuição patronal (CPP) é recolhida à parte, fora do DAS.", faixas: [
+            [180000, 0.045, 0], [360000, 0.090, 8100], [720000, 0.102, 12420],
+            [1800000, 0.140, 39780], [3600000, 0.220, 183780], [4800000, 0.330, 828000] ] },
+    V:   { nome: "Serviços (Anexo V)", cbs: 17.2, ibs: 14.0, ibsNome: "ISS", frac: 31.2,
+           atv: "Serviços intelectuais/técnicos com fator “r” < 28%: tecnologia/TI, engenharia, publicidade, auditoria, consultoria, medicina, odontologia, jornalismo, entre outros.", faixas: [
+            [180000, 0.155, 0], [360000, 0.180, 4500], [720000, 0.195, 9900],
+            [1800000, 0.205, 17100], [3600000, 0.230, 62100], [4800000, 0.305, 540000] ] }
+  };
+
+  // Transição do IBS/CBS: CBS integral desde 2027; IBS escalona 2029→2033.
+  var CBS_SHARE = 0.332, IBS_SHARE = 0.668;   // divisão do IVA de referência (CBS ~8,8% / IBS ~17,7% de 26,5%)
+  var TRANSICAO = {
+    "2027": { ibs: 0.00, nota: "CBS integral · IBS em fase de teste (0,1%) · ICMS/ISS ainda cheios" },
+    "2028": { ibs: 0.00, nota: "CBS integral · IBS em fase de teste (0,1%) · ICMS/ISS ainda cheios" },
+    "2029": { ibs: 0.10, nota: "IBS a 10% · ICMS/ISS a 90%" },
+    "2030": { ibs: 0.20, nota: "IBS a 20% · ICMS/ISS a 80%" },
+    "2031": { ibs: 0.30, nota: "IBS a 30% · ICMS/ISS a 70%" },
+    "2032": { ibs: 0.40, nota: "IBS a 40% · ICMS/ISS a 60%" },
+    "2033": { ibs: 1.00, nota: "Transição concluída · IBS/CBS integral · ICMS/ISS extintos" }
+  };
+
+  var brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  var num = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function money(v) { return brl.format(v); }
+  function pct(v) { return num.format(v) + "%"; }
+  function $(id) { return document.getElementById(id); }
+
+  var els = {
+    seg: $("seg"), ano: $("ano"), fat: $("fat"), cmp: $("cmp"), iva: $("iva"), frac: $("frac"),
+    alert: $("alert"), results: $("results"), verdict: $("verdict"),
+    tableBox: $("tableBox"), yearctx: $("yearctx")
+  };
+
+  var LIM_LABEL = ["até 180.000", "180.000,01 a 360.000", "360.000,01 a 720.000",
+                   "720.000,01 a 1.800.000", "1.800.000,01 a 3.600.000", "3.600.000,01 a 4.800.000"];
+
+  function renderTabela(anexoKey, faixaAtiva) {
+    var anexo = ANEXOS[anexoKey];
+    var rows = anexo.faixas.map(function (f, i) {
+      return '<tr class="' + (i === faixaAtiva ? "on" : "") + '">' +
+        "<td>" + (i + 1) + "ª faixa</td>" +
+        "<td>" + LIM_LABEL[i] + "</td>" +
+        "<td>" + num.format(f[1] * 100) + "%</td>" +
+        "<td>" + (f[2] === 0 ? "—" : money(f[2])) + "</td>" +
+      "</tr>";
+    }).join("");
+    var ipiNota = anexoKey === "II"
+      ? " O IPI (~7,5% do DAS) <strong>não entra</strong> — não é substituído por IBS/CBS."
+      : "";
+    els.tableBox.innerHTML =
+      '<p class="stbl-atv"><span class="atv-k">Atividades deste Anexo</span>' + anexo.atv + "</p>" +
+      '<p class="stbl-cap"><strong>' + anexo.nome + "</strong> · valores de RBT12 (receita bruta dos últimos 12 meses) em R$. " +
+      "Alíquota efetiva = (RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12.</p>" +
+      '<div class="tblscroll"><table class="stbl"><thead><tr>' +
+      "<th>Faixa</th><th>Receita bruta em 12 meses (RBT12)</th><th>Alíquota nominal</th><th>Parcela a deduzir</th>" +
+      "</tr></thead><tbody>" + rows + "</tbody></table></div>" +
+      '<div class="comp">' +
+        '<div class="comp-h">Fração do DAS substituída por IBS/CBS</div>' +
+        '<div class="comp-eq">' +
+          '<span>PIS + COFINS <b>' + num.format(anexo.cbs) + "%</b> <i>→ CBS</i></span>" +
+          '<span class="op">+</span>' +
+          "<span>" + anexo.ibsNome + " <b>" + num.format(anexo.ibs) + "%</b> <i>→ IBS</i></span>" +
+          '<span class="op">=</span>' +
+          '<span class="comp-tot">' + num.format(anexo.frac) + "%</span>" +
+        "</div>" +
+        '<p class="comp-note">Soma das parcelas do DAS que o IBS/CBS substituem, pela <strong>repartição da LC 123</strong> (1ª faixa como referência).' + ipiNota +
+        " É esse percentual que <strong>sai do DAS</strong> ao optar pelo regime regular. " +
+        "⚠ Proxy — a RTC ainda não regulamentou a segregação, e a repartição real <strong>varia por faixa</strong>. Ajuste no campo acima se o contador indicar outro valor.</p>" +
+      "</div>";
+  }
+
+  // ao trocar o segmento, sugere a fração-padrão do anexo
+  var lastSeg = els.seg.value;
+  els.seg.addEventListener("change", function () {
+    els.frac.value = ANEXOS[els.seg.value].frac;
+    lastSeg = els.seg.value;
+    calc();
+  });
+  els.ano.addEventListener("change", calc);
+
+  // dropdown customizado nas cores Workin (mantém o <select> nativo como fonte do valor)
+  function enhanceSelect(sel) {
+    var wrap = sel.parentNode;
+    sel.classList.add("csel-native");
+    sel.tabIndex = -1;
+
+    var trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "csel-trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    var val = document.createElement("span"); val.className = "csel-val";
+    var chev = document.createElement("span"); chev.className = "csel-chev"; chev.textContent = "▾";
+    trigger.appendChild(val); trigger.appendChild(chev);
+
+    var list = document.createElement("div");
+    list.className = "csel-list";
+    list.setAttribute("role", "listbox");
+
+    function sync() {
+      val.textContent = sel.options[sel.selectedIndex].textContent;
+      for (var i = 0; i < list.children.length; i++) {
+        list.children[i].setAttribute("aria-selected", i === sel.selectedIndex ? "true" : "false");
+      }
+    }
+    function open() { wrap.classList.add("open"); }
+    function close() { wrap.classList.remove("open"); }
+    function choose(i) {
+      if (i < 0 || i >= sel.options.length) return;
+      sel.selectedIndex = i;
+      sync(); close();
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    Array.prototype.forEach.call(sel.options, function (o, i) {
+      var it = document.createElement("div");
+      it.className = "csel-opt";
+      it.setAttribute("role", "option");
+      it.textContent = o.textContent;
+      it.addEventListener("click", function () { choose(i); });
+      list.appendChild(it);
+    });
+
+    trigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      wrap.classList.contains("open") ? close() : open();
+    });
+    trigger.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); choose(Math.min(sel.selectedIndex + 1, sel.options.length - 1)); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); choose(Math.max(sel.selectedIndex - 1, 0)); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wrap.classList.contains("open") ? close() : open(); }
+      else if (e.key === "Escape") { close(); }
+    });
+    document.addEventListener("click", function (e) { if (!wrap.contains(e.target)) close(); });
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(list);
+    sync();
+  }
+  enhanceSelect(els.seg);
+  enhanceSelect(els.ano);
+
+  function faixaDe(anexo, rbt12) {
+    for (var i = 0; i < anexo.faixas.length; i++) {
+      if (rbt12 <= anexo.faixas[i][0]) return i;
+    }
+    return -1; // acima do teto do Simples
+  }
+
+  function row(lbl, expr, cls) {
+    return '<div class="lrow' + (cls ? " " + cls : "") + '"><span class="lbl">' +
+           lbl + '</span><span class="expr">' + expr + '</span></div>';
+  }
+
+  function calc() {
+    var anexo = ANEXOS[els.seg.value];
+    var fat = Math.max(0, parseFloat(els.fat.value) || 0);
+    var cmp = Math.max(0, parseFloat(els.cmp.value) || 0);
+    var iva = Math.max(0, parseFloat(els.iva.value) || 0) / 100;
+    var frac = Math.min(100, Math.max(0, parseFloat(els.frac.value) || 0)) / 100;
+    var rbt12 = fat * 12;
+
+    var fi = faixaDe(anexo, rbt12);
+    renderTabela(els.seg.value, fi);
+    if (fat <= 0 || fi === -1) {
+      els.results.style.display = "none";
+      els.verdict.style.display = "none";
+      els.yearctx.style.display = "none";
+      els.alert.className = "alert show";
+      els.alert.innerHTML = fat <= 0
+        ? "Informe um faturamento mensal para simular."
+        : "<strong>Fora do Simples Nacional.</strong> O RBT12 (" + money(rbt12) +
+          ") ultrapassa o teto de R$ 4.800.000,00 — a empresa estaria no regime normal, sem a opção do art. 41 §3.";
+      return;
+    }
+    els.alert.className = "alert";
+    els.results.style.display = "";
+    els.verdict.style.display = "";
+    els.yearctx.style.display = "";
+
+    var faixa = anexo.faixas[fi];
+    var nominal = faixa[1], deduz = faixa[2];
+    var efetiva = (rbt12 * nominal - deduz) / rbt12; // fração
+    var efPct = efetiva * 100;
+
+    // ---- transição pelo ano-base
+    var ano = els.ano.value;
+    var tr = TRANSICAO[ano];
+    var ibsPhase = tr.ibs;
+    var vigor = CBS_SHARE + IBS_SHARE * ibsPhase;   // fração do IVA de referência em vigor no ano
+    var effIva = iva * vigor;                        // alíquota IBS/CBS efetiva no ano
+    // parcela do DAS que efetivamente sai no ano: CBS integral desde 2027 + IBS escalonado
+    var cbsRatio = anexo.cbs / anexo.frac;           // proporção PIS+COFINS dentro da fração
+    var cbsPart = frac * cbsRatio;                   // frac é decimal
+    var ibsPart = frac * (1 - cbsRatio);
+    var fracOut = cbsPart + ibsPart * ibsPhase;      // fração do DAS substituída no ano
+
+    // Situação 1 — por dentro
+    var das = fat * efetiva;
+    var credDentro = das * fracOut;
+
+    // Situação 2 — por fora
+    var dasRed = fat * efetiva * (1 - fracOut);
+    var debito = effIva * fat;
+    var credCompras = effIva * cmp;
+    var ibscbs = debito - credCompras;
+    var cargaFora = dasRed + ibscbs;
+    var credFora = debito;
+
+    // ---- métricas
+    $("d-carga").textContent = money(das);
+    $("d-carga-pct").textContent = fat ? pct(das / fat * 100) + " do faturamento" : "";
+    $("d-cred").textContent = money(credDentro);
+    $("f-carga").textContent = money(cargaFora);
+    $("f-carga-pct").textContent = fat ? pct(cargaFora / fat * 100) + " do faturamento" : "";
+    $("f-cred").textContent = money(credFora);
+
+    // ---- banner do ano-base
+    els.yearctx.innerHTML =
+      '<span class="yr">' + ano + "</span>" +
+      '<div class="yc-item"><span class="yc-k">IBS/CBS em vigor</span><span class="yc-v">' + pct(effIva * 100) + " de " + pct(iva * 100) + "</span></div>" +
+      '<div class="yc-item"><span class="yc-k">Do DAS sai (por fora)</span><span class="yc-v">' + pct(fracOut * 100) + "</span></div>" +
+      '<div class="yc-note">' + tr.nota + "</div>";
+
+    // ---- memória: base comum
+    var base =
+      row("RBT12", money(fat) + " × 12 = " + money(rbt12)) +
+      row("Faixa aplicada", anexo.nome + " · faixa " + (fi + 1)) +
+      row("Alíquota nominal / dedução", pct(nominal * 100) + " · " + money(deduz)) +
+      row("Alíquota efetiva", "(" + money(rbt12) + " × " + pct(nominal * 100) + " − " + money(deduz) + ") ÷ " + money(rbt12) + " = " + pct(efPct));
+
+    $("d-memo").innerHTML = base +
+      row("DAS (carga própria)", money(fat) + " × " + pct(efPct) + " = " + money(das), "total") +
+      row("Crédito ao cliente (" + ano + ")", money(das) + " × " + pct(fracOut * 100) + " = " + money(credDentro)) +
+      '<p class="lnote">O optante não se credita das compras; o cliente do regime regular só aproveita o IBS/CBS efetivamente pago dentro do DAS (crédito limitado). O total do DAS é mantido nas regras atuais — a tabela específica do Simples na transição ainda depende de regulamentação.</p>';
+
+    $("f-memo").innerHTML = base +
+      row("Ano-base", ano + " — " + tr.nota) +
+      row("IBS/CBS em vigor no ano", pct(iva * 100) + " × " + pct(vigor * 100) + " = " + pct(effIva * 100)) +
+      row("Fração do DAS que sai (ano)", pct(cbsPart * 100) + " + " + pct(ibsPart * 100) + " × " + num.format(ibsPhase * 100) + "% = " + pct(fracOut * 100)) +
+      row("DAS reduzido", money(fat) + " × " + pct(efPct) + " × (1 − " + pct(fracOut * 100) + ") = " + money(dasRed)) +
+      row("Débito IBS/CBS", pct(effIva * 100) + " × " + money(fat) + " = " + money(debito)) +
+      row("Crédito das compras", pct(effIva * 100) + " × " + money(cmp) + " = " + money(credCompras)) +
+      row("IBS/CBS a recolher", money(debito) + " − " + money(credCompras) + " = " + money(ibscbs)) +
+      row("Carga própria", money(dasRed) + " + " + money(ibscbs) + " = " + money(cargaFora), "total") +
+      row("Crédito ao cliente", pct(effIva * 100) + " × " + money(fat) + " = " + money(credFora)) +
+      '<p class="lnote">IBS/CBS saem do DAS e são apurados pelo regime regular, com crédito das compras — ambos escalonados pelo ano da transição. A operação transfere crédito integral ao adquirente.</p>';
+
+    // ---- veredito
+    var dCarga = cargaFora - das;         // + = paga mais por fora
+    var dCred = credFora - credDentro;    // + = repassa mais crédito
+
+    var vc = $("v-carga"), vcd = $("v-carga-d");
+    vc.textContent = (dCarga >= 0 ? "+" : "−") + money(Math.abs(dCarga)).replace("R$", "R$");
+    vc.className = "v " + (dCarga > 0 ? "v-neg" : dCarga < 0 ? "v-pos" : "");
+    vcd.textContent = dCarga > 0 ? "Por fora você paga mais imposto."
+                    : dCarga < 0 ? "Por fora você paga menos imposto."
+                    : "Carga própria igual nas duas situações.";
+
+    var vr = $("v-cred"), vrd = $("v-cred-d");
+    vr.textContent = "+" + money(dCred);
+    vr.className = "v v-pos";
+    vrd.textContent = "Crédito extra que o cliente do regime regular aproveita indo por fora.";
+
+    // ---- takeaway
+    var t;
+    if (dCarga <= 0) {
+      t = "Neste cenário, ir <strong>por fora</strong> reduz (ou empata) sua própria carga <em>e</em> ainda gera <strong>" +
+          money(dCred) + "</strong> a mais de crédito para o cliente. Tende a compensar — especialmente em vendas B2B.";
+    } else {
+      var custoPorCredito = dCred > 0 ? dCarga / dCred : Infinity;
+      t = "Ir <strong>por fora</strong> aumenta sua carga em <strong>" + money(dCarga) +
+          "</strong>, mas entrega <strong>" + money(dCred) + "</strong> a mais de crédito ao cliente" +
+          (isFinite(custoPorCredito) ? " (custo de " + pct(custoPorCredito * 100) + " por R$ 1,00 de crédito gerado)" : "") +
+          ". Compensa se seus clientes são <strong>empresas do regime normal</strong> que valorizam esse crédito; para venda a consumidor final, o ganho é baixo.";
+    }
+    $("takeaway").innerHTML = t + " <em>Decisão sempre com o contador.</em>";
+  }
+
+  ["input"].forEach(function (ev) {
+    [els.fat, els.cmp, els.iva, els.frac].forEach(function (el) { el.addEventListener(ev, calc); });
+  });
+  els.frac.value = ANEXOS[els.seg.value].frac;
+  calc();
+})();
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  var CONFIG = {
+    WEBHOOK_URL: 'https://services.leadconnectorhq.com/hooks/OOQ8MYkXPEJqbh0mej19/webhook-trigger/3v6gUHSr7deWDQzoKDDI',
+    UTM_CAMPAIGN_DEFAULT: 'calculadora-simples-ibs-cbs',
+  };
+
+  function capturaUTMs() {
+    var params = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   params.get('utm_source')   || 'direto',
+      utm_medium:   params.get('utm_medium')   || 'organico',
+      utm_campaign: params.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  params.get('utm_content')  || '',
+      utm_term:     params.get('utm_term')     || '',
+    };
+  }
+
+  var overlay = document.getElementById('modalOverlay');
+  var btnAbrir = document.getElementById('ctaAbrirModal');
+  var btnFechar = document.getElementById('modalClose');
+  var btnFecharSucesso = document.getElementById('btnFecharSucesso');
+  var formWrap = document.getElementById('modalFormWrap');
+  var sucessoWrap = document.getElementById('modalSucesso');
+  var form = document.getElementById('lead-form');
+  var phoneInput = document.getElementById('phone');
+
+  function abrirModal() {
+    overlay.classList.add('open');
+    formWrap.hidden = false;
+    sucessoWrap.hidden = true;
+    form.reset();
+    document.getElementById('msg-erro').classList.remove('show');
+  }
+  function fecharModal() { overlay.classList.remove('open'); }
+
+  btnAbrir.addEventListener('click', abrirModal);
+  btnFechar.addEventListener('click', fecharModal);
+  btnFecharSucesso.addEventListener('click', fecharModal);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) fecharModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) fecharModal(); });
+
+  phoneInput.addEventListener('input', function () {
+    var v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) { v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3'); }
+    else { v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3'); }
+    this.value = v;
+  });
+
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btnSubmit = document.getElementById('btnSubmit');
+    var msgErro = document.getElementById('msg-erro');
+    var utms = capturaUTMs();
+    var nomeCompleto = document.getElementById('fullName').value.trim();
+    var partes = nomeCompleto.split(' ');
+    var dados = {
+      firstName: partes[0] || '',
+      lastName:  partes.slice(1).join(' ') || '',
+      email:     document.getElementById('email').value.trim().toLowerCase(),
+      phone:     document.getElementById('phone').value.replace(/\D/g, ''),
+      modulo:    'calculadora-reforma-tributaria',
+      tipo_lead: 'ferramenta-gratuita-contador',
+      origem:    'calculadora-simples-ibs-cbs',
+      ...utms,
+    };
+    msgErro.classList.remove('show');
+    if (!valida(dados)) { msgErro.classList.add('show'); return; }
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Enviando...';
+    try {
+      await fetch(CONFIG.WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+    } catch (err) {
+      // segue para a confirmação mesmo em caso de falha de rede — mesmo padrão das LPs Workin
+    }
+    formWrap.hidden = true;
+    sucessoWrap.hidden = false;
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = 'Quero saber mais →';
+  });
+})();
+</script>
+
+</body>
+</html>

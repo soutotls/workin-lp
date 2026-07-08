@@ -344,7 +344,7 @@
     <p class="eyebrow">Reforma Tributária · Simples Nacional</p>
     <h1>Vale a pena recolher IBS e CBS por fora?</h1>
     <p class="lede">Simulação rápida para o optante do Simples decidir entre manter o IBS/CBS <strong>por dentro do DAS</strong> (regime único) ou apurá-los <strong>por fora</strong>, pelo regime regular. Compare a carga própria e o crédito repassado ao cliente — com a memória de cálculo aberta.</p>
-    <p class="simnote"><strong>Isto é um simulador.</strong> Os números são <strong>estimativas</strong> para apoiar a decisão — não representam apuração oficial nem substituem a orientação do contador.</p>
+    <p class="simnote"><strong>Isto é um simulador.</strong> Os números são <strong>estimativas</strong> para apoiar a decisão — não representam apuração oficial nem substituem a orientação do contador. Os campos abaixo já vêm com um <strong>exemplo preenchido</strong> — digite o faturamento e o custo de compras reais da sua empresa para simular o seu caso.</p>
   </header>
 
   <section class="card inputs">
@@ -378,14 +378,14 @@
         <p class="note">Durante a transição o IBS/CBS entra em partes: <strong>CBS integral já em 2027</strong>; o IBS sobe 10% ao ano de 2029 a 2032 e chega a 100% em <strong>2033</strong>.</p>
       </div>
       <div class="field">
-        <label for="fat">Faturamento mensal</label>
+        <label for="fat">Faturamento mensal <span class="hint">(exemplo abaixo · edite com o seu valor)</span></label>
         <div class="control"><span class="affix">R$</span><input id="fat" type="number" min="0" step="100" value="50000" inputmode="decimal"></div>
         <p class="note">Receita bruta de vendas no mês. Multiplicado por 12 forma o <strong>RBT12</strong>, que define a faixa e a alíquota efetiva.</p>
       </div>
       <div class="field">
-        <label for="cmp">Custo de compras <span class="hint">(mercadorias + insumos)</span></label>
+        <label for="cmp">Custo de compras <span class="hint">(exemplo abaixo · edite com o seu valor)</span></label>
         <div class="control"><span class="affix">R$</span><input id="cmp" type="number" min="0" step="100" value="20000" inputmode="decimal"></div>
-        <p class="note">Gasto mensal com fornecedores. Só gera <strong>crédito</strong> de IBS/CBS no cenário "por fora"; no "por dentro" não há crédito das compras.</p>
+        <p class="note">Gasto mensal com fornecedores (mercadorias + insumos). Só gera <strong>crédito</strong> de IBS/CBS no cenário "por fora"; no "por dentro" não há crédito das compras.</p>
       </div>
       <div class="field">
         <label for="iva">IVA Dual (IBS + CBS)</label>
@@ -841,6 +841,8 @@
   ["input"].forEach(function (ev) {
     [els.fat, els.cmp, els.iva, els.frac].forEach(function (el) { el.addEventListener(ev, calc); });
   });
+  // seleciona o valor de exemplo ao focar, para o usuário digitar por cima sem precisar apagar
+  [els.fat, els.cmp].forEach(function (el) { el.addEventListener("focus", function () { this.select(); }); });
   els.frac.value = ANEXOS[els.seg.value].frac;
   calc();
 })();

@@ -1049,6 +1049,7 @@
     WEBHOOK_URL: 'https://services.leadconnectorhq.com/hooks/OOQ8MYkXPEJqbh0mej19/webhook-trigger/b78596a0-a922-406d-a1c7-3061dd649ece',
     REDIRECT_URL: '/obrigado-bolepix.html',
     UTM_CAMPAIGN_DEFAULT: 'bolepix',
+    PROPOSAL_HUB_URL: 'https://crm.workin.com.br/api/landpages/8ArazYMjBfq2Bjnhhdp1yzVaOF4XrUxlcDomaHVCTeO5gkCi/lead',
   };
 
   /* ─── CAPTURA UTMs da URL ─── */
@@ -1101,6 +1102,16 @@
       phone:     document.getElementById('phone').value.replace(/\D/g, ''),
       ...utms,
     };
+
+    // ── Proposal Hub (CRM Workin) — fire-and-forget, roda em paralelo ao WeSales, nunca bloqueia nem depende dele ──
+    if (CONFIG.PROPOSAL_HUB_URL && CONFIG.PROPOSAL_HUB_URL.indexOf('{{') !== 0) {
+      fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...dados, idempotency_key: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) }),
+      }).catch(function () { /* silencioso — falha aqui nunca deve afetar o envio ao WeSales */ });
+    }
 
     msgErro.style.display = 'none';
     msgOk.style.display   = 'none';

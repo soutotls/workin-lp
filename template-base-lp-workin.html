@@ -595,9 +595,10 @@
 <script>
   /* ─── CONFIGURAÇÃO — alterar por LP ─── */
   const CONFIG = {
-    WEBHOOK_URL: '{{WEBHOOK_URL}}',           // URL gerada no WeSales
+    WEBHOOK_URL: '{{WEBHOOK_URL}}',           // OPCIONAL — URL gerada no WeSales; deixe o placeholder se esta LP não deve mais ir pro WeSales
     REDIRECT_URL: '{{REDIRECT_URL}}',         // ex: /obrigado-locacao.html
     UTM_CAMPAIGN_DEFAULT: '{{UTM_CAMPAIGN}}', // ex: locacao-equipamentos
+    PROPOSAL_HUB_URL: '{{PROPOSAL_HUB_URL}}', // gerada em crm.workin.com.br/landing-pages (cadastrar a LP lá e colar o snippet exibido)
   };
 
   /* ─── CAPTURA UTMs da URL ─── */
@@ -629,6 +630,11 @@
     return v.replace(/\D/g, '');
   }
 
+  /* ─── Um destino (WEBHOOK_URL/PROPOSAL_HUB_URL) só está "ligado" se o placeholder {{...}} foi substituído ─── */
+  function destinoConfigurado(url) {
+    return !!url && url.indexOf('{{') !== 0;
+  }
+
   /* ─── VALIDAÇÃO SIMPLES ─── */
   function valida(dados) {
     if (!dados.firstName.trim()) return false;
@@ -655,6 +661,23 @@
       ...utms,
     };
 
+    const enviaWeSales     = destinoConfigurado(CONFIG.WEBHOOK_URL);
+    const enviaProposalHub = destinoConfigurado(CONFIG.PROPOSAL_HUB_URL);
+
+    // ── Proposal Hub (CRM Workin) — disparado já aqui. Se o WeSales também estiver configurado, roda em
+    // paralelo e nunca bloqueia nem depende dele (o await no WeSales logo abaixo já dá tempo dele terminar).
+    // Se for o ÚNICO destino (WeSales não configurado nesta LP), é aguardado mais abaixo antes do redirect —
+    // sem isso, a navegação pode cancelar o fetch no meio do caminho.
+    var promiseProposalHub = null;
+    if (enviaProposalHub) {
+      promiseProposalHub = fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...dados, idempotency_key: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) }),
+      }).catch(function () { /* silencioso — nunca deve impedir o redirect da LP */ });
+    }
+
     msgErro.style.display = 'none';
     msgOk.style.display   = 'none';
 
@@ -667,15 +690,20 @@
     btnSubmit.textContent = 'Enviando...';
 
     try {
-      await fetch(CONFIG.WEBHOOK_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(dados),
-      });
-      // Redireciona independente do status HTTP (GHL sempre retorna 200)
+      if (enviaWeSales) {
+        await fetch(CONFIG.WEBHOOK_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(dados),
+        });
+      } else if (promiseProposalHub) {
+        await promiseProposalHub;
+      }
+      // Redireciona independente do status HTTP (GHL sempre retorna 200; erro do Proposal Hub já foi
+      // engolido acima e fica registrado só do lado de lá, não deve travar a experiência da LP)
       window.location.href = CONFIG.REDIRECT_URL;
     } catch (err) {
-      // Fallback: mostra mensagem de sucesso se o redirect falhar
+      // Fallback: mostra mensagem de sucesso se o redirect falhar (só chega aqui se enviaWeSales e ele falhar)
       msgOk.style.display   = 'block';
       btnSubmit.disabled    = false;
       btnSubmit.textContent = '{{CTA_FORMULARIO}}';

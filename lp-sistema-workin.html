@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Gerencie vendas, financeiro, estoque, emissão fiscal e mais em um único sistema. Conheça a Workin, o ERP completo para o seu negócio." />
+  <title>Sistema de Gestão Completo para Empresas — Workin ERP</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Open Graph (Meta Ads) -->
+  <meta property="og:title" content="Simplifique a gestão da sua empresa com a Workin" />
+  <meta property="og:description" content="Vendas, financeiro, estoque, emissão fiscal e outros processos do seu negócio em um único sistema." />
+  <meta property="og:image" content="https://sistemaworkin.com.br/og-sistema.jpg" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; background: #fff; line-height: 1.6; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── VARIÁVEIS ─── */
+    :root {
+      --verde: #00AD50;
+      --verde-escuro: #008a3f;
+      --azul: #22253A;
+      --cinza-claro: #f5f5f5;
+      --cinza-texto: #555;
+      --branco: #ffffff;
+      --max-w: 860px;
+    }
+
+    /* ─── UTILITÁRIOS ─── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 20px; }
+    .btn {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .btn:hover { background: var(--verde-escuro); }
+    .btn-lg { font-size: 1.15rem; padding: 20px 48px; }
+    .tag {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--branco);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 3px solid var(--verde);
+    }
+    header img { height: 70px; margin: 0 auto; }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--azul);
+      color: var(--branco);
+      padding: 64px 20px 72px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.65rem, 4vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.22;
+      margin-bottom: 20px;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.18rem);
+      color: #c8ccd8;
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,173,80,0.15);
+      border: 1px solid rgba(0,173,80,0.4);
+      color: #6de0a0;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* ─── HIGHLIGHTS (barra verde) ─── */
+    .highlights { background: var(--verde); color: var(--branco); padding: 22px 20px; }
+    .highlights-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 32px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      text-align: center;
+    }
+    .highlights-grid span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* ─── FLUXO CAIXA (Sua gestão em um só fluxo) ─── */
+    .fluxo-caixa { padding: 64px 20px; text-align: center; background: var(--branco); }
+    .fluxo-caixa h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 36px; }
+    .fluxo-mini-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      max-width: 840px;
+      margin: 0 auto 48px;
+    }
+    .fluxo-mini-item {
+      background: var(--cinza-claro);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      color: var(--azul);
+      font-weight: 600;
+      flex: 1;
+      min-width: 160px;
+    }
+    .fluxo-mini-arrow { color: var(--verde); font-size: 1.3rem; font-weight: 700; flex-shrink: 0; }
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 28px;
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.95rem; color: var(--cinza-texto); }
+    .check-item .check-circle {
+      width: 20px; height: 20px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    @media (max-width: 640px) {
+      .fluxo-mini-row { flex-direction: column; }
+      .fluxo-mini-arrow { transform: rotate(90deg); }
+      .checklist-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── COMPARATIVO ─── */
+    .comparativo { padding: 60px 20px; background: #fff; }
+    .comparativo h2 { text-align: center; color: var(--azul); font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 30px; }
+    .comparativo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .comparativo-card { border-radius: 10px; padding: 24px 20px; }
+    .comparativo-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--azul); }
+    .comparativo-card p {
+      font-size: 0.95rem;
+      color: var(--cinza-texto);
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      line-height: 1.5;
+    }
+    .comparativo-card p:last-child { border-bottom: none; }
+    .comparativo-neg { border: 2px solid #d9534f; }
+    .comparativo-pos { border: 2px solid var(--verde); }
+    @media (max-width: 480px) { .comparativo-grid { grid-template-columns: 1fr; } }
+
+    /* ─── PROBLEMA ─── */
+    .problema { background: var(--cinza-claro); padding: 64px 20px; text-align: center; }
+    .problema h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .problema .subtitulo { color: var(--cinza-texto); margin-bottom: 40px; font-size: 1rem; }
+    .dores { display: flex; flex-direction: column; gap: 14px; max-width: 640px; margin: 0 auto; text-align: left; }
+    .dor-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--branco);
+      padding: 18px 20px;
+      border-radius: 8px;
+      border-left: 4px solid var(--verde);
+    }
+    .dor-item .icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+    .dor-item p { font-size: 1rem; color: var(--azul); font-weight: 500; line-height: 1.4; }
+
+    /* ─── SOLUÇÃO / MÓDULOS ─── */
+    .solucao { padding: 64px 20px; text-align: center; }
+    .solucao h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .solucao .subtitulo { color: var(--cinza-texto); margin-bottom: 40px; }
+    .grid-modulos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 920px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .modulo-mini {
+      background: var(--branco);
+      border: 1.5px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 20px 18px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .modulo-mini:hover { border-color: var(--verde); transform: translateY(-2px); }
+    .modulo-mini .icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+    .modulo-mini h4 { font-size: 0.98rem; color: var(--azul); margin-bottom: 4px; }
+    .modulo-mini p { font-size: 0.85rem; color: var(--cinza-texto); line-height: 1.5; }
+    @media (max-width: 720px) { .grid-modulos { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .grid-modulos { grid-template-columns: 1fr; } }
+
+    /* ─── PARCERIA SHIPAY ─── */
+    .parceria { background: var(--azul); padding: 48px 20px; }
+    .parceria-box { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; gap: 40px; }
+    .parceria-badge {
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 24px;
+      text-align: center;
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .parceria-badge img { width: 110px; height: auto; display: block; }
+    .parceria-badge .rotulo { font-size: 0.68rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+    .parceria-texto { color: var(--branco); }
+    .parceria-texto h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: #fff; }
+    .parceria-texto p { font-size: 0.92rem; color: #9aa0b8; line-height: 1.6; }
+    .parceria-texto p strong { color: #6de0a0; }
+    @media (max-width: 580px) { .parceria-box { flex-direction: column; gap: 20px; text-align: center; } }
+
+    /* ─── BANCOS ─── */
+    .bancos { padding: 40px 20px; text-align: center; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+    .bancos p { font-size: 0.85rem; color: #999; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .bancos-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .banco-tag { background: var(--cinza-claro); color: var(--azul); font-size: 0.82rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1px solid #e0e0e0; }
+
+    /* ─── FLUXO ─── */
+    .fluxo { background: var(--azul); color: var(--branco); padding: 56px 20px; text-align: center; }
+    .fluxo h2 { font-size: clamp(1.2rem, 3vw, 1.6rem); margin-bottom: 36px; }
+    .fluxo-steps { display: flex; flex-direction: column; gap: 0; max-width: 560px; margin: 0 auto; text-align: left; }
+    .fluxo-step { display: flex; align-items: flex-start; gap: 18px; padding-bottom: 28px; position: relative; }
+    .fluxo-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(0,173,80,0.3);
+    }
+    .fluxo-step:last-child { padding-bottom: 0; }
+    .step-num {
+      background: var(--verde);
+      color: var(--branco);
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .step-text strong { display: block; font-size: 1rem; margin-bottom: 3px; }
+    .step-text span { font-size: 0.9rem; color: #aab0c0; line-height: 1.5; }
+
+    /* ─── VÍDEO ─── */
+    .video-section { padding: 64px 20px; text-align: center; background: var(--branco); }
+    .video-section h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .video-section .subtitulo { color: var(--cinza-texto); margin-bottom: 32px; }
+    .video-wrapper {
+      position: relative;
+      max-width: 780px;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: block;
+    }
+    .video-wrapper img { width: 100%; display: block; }
+    .video-play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .video-wrapper:hover .video-play-btn { background: var(--verde); transform: translate(-50%, -50%) scale(1.08); }
+    .video-play-btn svg { margin-left: 5px; }
+
+    /* ─── FORMULÁRIO ─── */
+    .formulario { background: var(--cinza-claro); padding: 64px 20px; text-align: center; }
+    .formulario h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--azul); margin-bottom: 8px; }
+    .formulario .subtitulo { color: var(--cinza-texto); margin-bottom: 32px; }
+    .form-box {
+      background: var(--branco);
+      border-radius: 10px;
+      padding: 36px 28px;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.09);
+    }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--azul); margin-bottom: 6px; }
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      color: #1a1a1a;
+    }
+    .form-group input:focus { outline: none; border-color: var(--verde); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-legal { font-size: 0.78rem; color: #999; margin-top: 12px; line-height: 1.4; }
+    #msg-erro { color: #d32f2f; font-size: 0.88rem; margin-top: 10px; display: none; }
+    #msg-sucesso { color: var(--verde-escuro); font-size: 0.95rem; margin-top: 10px; display: none; font-weight: 600; }
+    .btn-submit { margin-top: 20px; width: 100%; font-size: 1.05rem; padding: 17px; }
+
+    /* ─── PROVA ─── */
+    .prova { padding: 64px 20px; text-align: center; }
+    .prova h2 { font-size: 1.5rem; color: var(--azul); margin-bottom: 32px; }
+    .depoimento {
+      background: var(--cinza-claro);
+      border-left: 4px solid var(--verde);
+      border-radius: 8px;
+      padding: 28px 24px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .depoimento blockquote { font-size: 1.05rem; color: var(--azul); font-style: italic; margin-bottom: 16px; line-height: 1.7; }
+    .depoimento cite { font-size: 0.88rem; color: var(--cinza-texto); font-style: normal; font-weight: 600; }
+
+    /* ─── FAQ ─── */
+    .faq { background: var(--cinza-claro); padding: 64px 20px; }
+    .faq h2 { font-size: 1.5rem; color: var(--azul); text-align: center; margin-bottom: 32px; }
+    .faq-lista { max-width: 680px; margin: 0 auto; }
+    details { background: var(--branco); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    summary {
+      padding: 18px 20px;
+      font-weight: 600;
+      color: var(--azul);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.97rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.3rem; color: var(--verde); flex-shrink: 0; margin-left: 12px; }
+    details[open] summary::after { content: '−'; }
+    details p { padding: 0 20px 18px; color: var(--cinza-texto); font-size: 0.95rem; line-height: 1.6; }
+
+    /* ─── CTA FINAL ─── */
+    .cta-final { background: var(--verde); color: var(--branco); padding: 64px 20px; text-align: center; }
+    .cta-final h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: 12px; }
+    .cta-final p { font-size: 1.05rem; margin-bottom: 28px; opacity: 0.9; }
+    .btn-branco { background: var(--branco); color: var(--verde-escuro); }
+    .btn-branco:hover { background: #f0f0f0; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--azul); color: #7a7f95; padding: 28px 20px; text-align: center; font-size: 0.82rem; line-height: 1.8; }
+    footer a { color: #7a7f95; text-decoration: underline; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.5rem; }
+      .btn-lg { width: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <img src="logo-workin.png" alt="Workin ERP" />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🏢 Para empresas que querem mais controle, praticidade e eficiência na gestão</div>
+    <h1>Simplifique a gestão da sua empresa com a Workin</h1>
+    <p>Gerencie vendas, financeiro, estoque, emissão fiscal e outros processos do seu negócio em um único sistema.</p>
+    <a href="#formulario" class="btn btn-lg">Quero conhecer a Workin</a>
+  </div>
+</section>
+
+<!-- HIGHLIGHTS -->
+<section class="highlights">
+  <div class="container">
+    <div class="highlights-grid">
+      <span>📊 Gestão integrada</span>
+      <span>⚡ Processos mais simples</span>
+      <span>📈 Informações para decisões melhores</span>
+    </div>
+  </div>
+</section>
+
+<!-- SUA GESTÃO EM UM SÓ FLUXO -->
+<section class="fluxo-caixa">
+  <div class="container">
+    <h2>Sua gestão em um só fluxo</h2>
+    <div class="fluxo-mini-row">
+      <div class="fluxo-mini-item">Você realiza a venda</div>
+      <span class="fluxo-mini-arrow">→</span>
+      <div class="fluxo-mini-item">O sistema registra a operação</div>
+      <span class="fluxo-mini-arrow">→</span>
+      <div class="fluxo-mini-item">Estoque, financeiro e fiscal são atualizados</div>
+      <span class="fluxo-mini-arrow">→</span>
+      <div class="fluxo-mini-item">Você acompanha os resultados</div>
+    </div>
+    <div class="checklist-grid">
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Gestão comercial e financeira integrada
+      </div>
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Controle de estoque em tempo real
+      </div>
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Automação de processos
+      </div>
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Relatórios gerenciais
+      </div>
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Emissão de notas fiscais
+      </div>
+      <div class="check-item">
+        <div class="check-circle"><svg viewBox="0 0 10 10" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><polyline points="2 5 4 7 8 3"/></svg></div>
+        Mais praticidade para a operação
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARATIVO -->
+<section class="comparativo">
+  <div class="container">
+    <h2>Qual a diferença na prática?</h2>
+    <div class="comparativo-grid">
+      <div class="comparativo-card comparativo-neg">
+        <h3>❌ Outros sistemas</h3>
+        <p>Processos de gestão mais complexos</p>
+        <p>Informações espalhadas</p>
+        <p>Mais trabalho manual</p>
+        <p>Dificuldade para acompanhar os resultados</p>
+        <p>Gestão menos integrada</p>
+      </div>
+      <div class="comparativo-card comparativo-pos">
+        <h3>✅ Workin</h3>
+        <p>Processos automatizados</p>
+        <p>Setores integrados</p>
+        <p>Informações centralizadas</p>
+        <p>Relatórios gerenciais</p>
+        <p>Gestão comercial e empresarial simplificada</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <h2>Reconhece algum desses problemas?</h2>
+    <p class="subtitulo">Se você se identificar com pelo menos um, a Workin pode ajudar.</p>
+    <div class="dores">
+      <div class="dor-item">
+        <span class="icon">😓</span>
+        <p>Processos manuais que consomem tempo — rotinas complexas podem dificultar a operação e tirar o foco do que realmente importa.</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">📦</span>
+        <p>Dificuldade para controlar o estoque — sem um controle adequado, fica mais difícil acompanhar produtos e evitar falta ou excesso de estoque.</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">💰</span>
+        <p>Dificuldade para acompanhar o financeiro — contas a pagar, receber e outras informações precisam estar organizadas para facilitar a gestão.</p>
+      </div>
+      <div class="dor-item">
+        <span class="icon">📊</span>
+        <p>Falta de informações para tomar decisões — sem relatórios e resultados apresentados de forma simples, acompanhar o desempenho da empresa fica mais difícil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO / MÓDULOS -->
+<section class="solucao">
+  <div class="container">
+    <span class="tag">Módulos Workin</span>
+    <h2>Gestão completa para sua empresa</h2>
+    <p class="subtitulo">12 módulos integrados para automatizar cada parte do seu negócio.</p>
+    <div class="grid-modulos">
+      <div class="modulo-mini"><span class="icon">💰</span><h4>Financeiro</h4><p>Automação financeira e gestão de contas a pagar e receber.</p></div>
+      <div class="modulo-mini"><span class="icon">🛒</span><h4>Vendas</h4><p>Gerencie as vendas e tenha mais controle sobre sua operação comercial.</p></div>
+      <div class="modulo-mini"><span class="icon">📦</span><h4>Estoque</h4><p>Controle detalhado do estoque em tempo real.</p></div>
+      <div class="modulo-mini"><span class="icon">🧾</span><h4>Fiscal</h4><p>Emissão de documentos fiscais integrada à gestão da empresa.</p></div>
+      <div class="modulo-mini"><span class="icon">📊</span><h4>Relatórios</h4><p>Relatórios gerenciais para acompanhar resultados e apoiar decisões.</p></div>
+      <div class="modulo-mini"><span class="icon">💳</span><h4>PIX integrado ao PDV</h4><p>Sistema de PIX integrado ao ponto de venda.</p></div>
+      <div class="modulo-mini"><span class="icon">🔄</span><h4>Devoluções</h4><p>Devoluções automatizadas para facilitar a operação.</p></div>
+      <div class="modulo-mini"><span class="icon">🔧</span><h4>Ordem de Serviço</h4><p>Gestão de ordens de serviço.</p></div>
+      <div class="modulo-mini"><span class="icon">🏷️</span><h4>Tabela de preços</h4><p>Organização de preços para a operação comercial.</p></div>
+      <div class="modulo-mini"><span class="icon">🎁</span><h4>Clube de fidelidade</h4><p>Recurso para trabalhar a fidelização dos clientes.</p></div>
+      <div class="modulo-mini"><span class="icon">📱</span><h4>Catálogo digital</h4><p>Apresente seus produtos por meio de um catálogo digital.</p></div>
+      <div class="modulo-mini"><span class="icon">🛍️</span><h4>Integração com e-commerce</h4><p>Integração do catálogo com seu e-commerce.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARCERIA SHIPAY -->
+<section class="parceria">
+  <div class="container">
+    <div class="parceria-box">
+      <div class="parceria-badge">
+        <img src="logo-shipay.webp" alt="Shipay" />
+        <span class="rotulo">parceiro oficial</span>
+      </div>
+      <div class="parceria-texto">
+        <h3>Por que escolher a Workin para o financeiro da sua empresa?</h3>
+        <p>
+          O Workin é <strong>parceiro oficial da Shipay</strong>, fintech brasileira líder em pagamentos digitais para ERPs.
+          A Shipay centraliza PIX, boleto e mais de 20 carteiras digitais num único hub — e o Workin integra 100% dessa tecnologia
+          direto no seu financeiro. É por isso que você tem <strong>liquidação D+0, 24x7</strong>, conciliação automática e
+          até <strong>80% de redução de custo</strong> sem contratar nenhum serviço separado.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANCOS -->
+<section class="bancos">
+  <div class="container">
+    <p>Bancos integrados via API</p>
+    <div class="bancos-lista">
+      <span class="banco-tag">Banco do Brasil</span>
+      <span class="banco-tag">Bradesco</span>
+      <span class="banco-tag">Caixa</span>
+      <span class="banco-tag">Itaú</span>
+      <span class="banco-tag">Santander</span>
+      <span class="banco-tag">Sicredi</span>
+      <span class="banco-tag">Sicoob</span>
+    </div>
+  </div>
+</section>
+
+<!-- FLUXO -->
+<section class="fluxo">
+  <div class="container">
+    <h2>Como funciona na prática</h2>
+    <div class="fluxo-steps">
+      <div class="fluxo-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Sua empresa cadastra os produtos e informações</strong>
+          <span>Centralize os dados necessários para a operação.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Você realiza suas vendas</strong>
+          <span>Gerencie suas vendas de forma simples e rápida.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Os processos são integrados</strong>
+          <span>Financeiro, estoque e demais processos acompanham a operação.</span>
+        </div>
+      </div>
+      <div class="fluxo-step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Você acompanha os resultados</strong>
+          <span>Tenha acesso a relatórios e informações para apoiar suas decisões.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VÍDEO -->
+<section class="video-section">
+  <div class="container">
+    <h2>Veja o Workin funcionando na prática</h2>
+    <p class="subtitulo">Em poucos minutos você entende como a Workin simplifica a gestão do seu negócio.</p>
+    <!-- EMBED: funciona em servidor com https:// — localmente exibe thumbnail -->
+    <div class="video-wrapper" id="video-container">
+      <a href="https://youtu.be/Z_miS8ihlFI" target="_blank" rel="noopener" id="video-fallback" style="display:block;position:relative;">
+        <img src="https://img.youtube.com/vi/Z_miS8ihlFI/maxresdefault.jpg" alt="Workin ERP — Sistema de Gestão Completo" />
+        <div class="video-play-btn">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </a>
+    </div>
+    <script>
+      (function () {
+        if (location.protocol === 'https:' || location.hostname === 'localhost') {
+          var c = document.getElementById('video-container');
+          c.innerHTML = '<iframe src="https://www.youtube.com/embed/Z_miS8ihlFI" title="Workin ERP — Sistema de Gestão Completo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
+          c.style.paddingBottom = '56.25%';
+          c.style.height = '0';
+          c.style.position = 'relative';
+        }
+      })();
+    </script>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="formulario">
+  <div class="container">
+    <h2>Veja como a Workin pode ajudar sua empresa</h2>
+    <p class="subtitulo">Preencha o formulário e nossa equipe entrará em contato para apresentar o sistema e mostrar como a Workin pode contribuir para a gestão do seu negócio.</p>
+    <div class="form-box">
+      <form id="lead-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Nome *</label>
+            <input type="text" id="firstName" name="firstName" placeholder="João" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Sobrenome *</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Silva" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" placeholder="joao@suaempresa.com.br" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp / Telefone *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required />
+        </div>
+        <div id="msg-erro">Por favor, preencha todos os campos corretamente.</div>
+        <div id="msg-sucesso">Recebido! Nossa equipe vai entrar em contato em breve.</div>
+        <button type="submit" class="btn btn-submit">Quero Conhecer a Workin</button>
+        <p class="form-legal">Seus dados estão seguros e não serão compartilhados. Sem spam.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="prova">
+  <div class="container">
+    <h2>Quem já usa, não abre mão</h2>
+    <div class="depoimento">
+      <blockquote>
+        "Sistema bem dinâmico, fácil de operar, cada vez mais completo, sempre se atualizando. Os relatórios ajudam muito nas tomadas de decisões, sendo mais assertivo e preciso. Suporte sempre pronto para lhe ajudar."
+      </blockquote>
+      <cite>⭐⭐⭐⭐⭐ — Jean Dias · JSJ Locações</cite>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-lista">
+
+      <details>
+        <summary>Quais áreas da empresa posso gerenciar com a Workin?</summary>
+        <p>A solução possui recursos para gestão financeira, vendas, estoque, emissão fiscal, relatórios, devoluções, ordem de serviço, entre outros.</p>
+      </details>
+
+      <details>
+        <summary>A Workin possui controle de estoque?</summary>
+        <p>Sim. O sistema permite manter um controle detalhado do estoque em tempo real.</p>
+      </details>
+
+      <details>
+        <summary>A Workin possui relatórios gerenciais?</summary>
+        <p>Sim. A Workin disponibiliza relatórios gerenciais e resultados apresentados de forma simples para apoiar a tomada de decisões.</p>
+      </details>
+
+      <details>
+        <summary>A Workin atende quais tipos de empresas?</summary>
+        <p>A Workin atende empresas de varejo e serviços, com soluções para segmentos como varejo, autopeças, oficinas, informática, materiais de construção, mercados e açougues, lanchonetes, sorveterias e conveniências.</p>
+      </details>
+
+      <details>
+        <summary>Existe suporte?</summary>
+        <p>Sim. A Workin possui uma rede de revendas em todo o Brasil, com profissionais treinados para oferecer suporte localizado e personalizado.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <h2>Chega de complicar a gestão da sua empresa</h2>
+    <p>Tenha uma solução completa para automatizar processos, integrar setores e facilitar a gestão do seu negócio. Conheça a Workin e descubra como simplificar a gestão da sua empresa.</p>
+    <a href="#formulario" class="btn btn-lg btn-branco">QUERO VER A WORKIN FUNCIONANDO</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>Workin — 3LMS Manutenção e Sistemas Ltda · CNPJ: 24.375.944/0001-01</p>
+    <p>Rua Bruno Garcia, 788 — Centro, Sala 2 · CEP 79602-040</p>
+    <p>(67) 2105-3900 · <a href="mailto:oi@workin.com.br">oi@workin.com.br</a></p>
+    <p>
+      <a href="/politica-de-privacidade.html">Política de Privacidade</a> ·
+      <a href="https://sistemaworkin.com.br" target="_blank" rel="noopener">sistemaworkin.com.br</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ─── CONFIGURAÇÃO ─── */
+  const CONFIG = {
+    REDIRECT_URL: '/obrigado-sistema.html',
+    UTM_CAMPAIGN_DEFAULT: 'sistema-workin',
+    PROPOSAL_HUB_URL: 'https://crm.workin.com.br/api/landpages/NSiPf8IkCi86mGzIRMrM6KS74k4TL2ougq8rjpWZi7ACJseA/lead', // único destino do lead — esta LP não usa WeSales
+  };
+
+  /* ─── CAPTURA UTMs da URL ─── */
+  function capturaUTMs() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source:   params.get('utm_source')   || 'direto',
+      utm_medium:   params.get('utm_medium')   || 'organico',
+      utm_campaign: params.get('utm_campaign') || CONFIG.UTM_CAMPAIGN_DEFAULT,
+      utm_content:  params.get('utm_content')  || '',
+      utm_term:     params.get('utm_term')     || '',
+    };
+  }
+
+  /* ─── MÁSCARA DE TELEFONE ─── */
+  const phoneInput = document.getElementById('phone');
+  phoneInput.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length <= 10) {
+      v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else {
+      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    }
+    this.value = v;
+  });
+
+  /* ─── VALIDAÇÃO ─── */
+  function valida(dados) {
+    if (!dados.firstName.trim()) return false;
+    if (!dados.lastName.trim()) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
+    if (dados.phone.length < 10) return false;
+    return true;
+  }
+
+  /* ─── ENVIO ─── */
+  document.getElementById('lead-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btnSubmit = this.querySelector('button[type="submit"]');
+    const msgErro   = document.getElementById('msg-erro');
+    const msgOk     = document.getElementById('msg-sucesso');
+
+    const utms = capturaUTMs();
+    const dados = {
+      firstName:    document.getElementById('firstName').value.trim(),
+      lastName:     document.getElementById('lastName').value.trim(),
+      email:        document.getElementById('email').value.trim().toLowerCase(),
+      phone:        document.getElementById('phone').value.replace(/\D/g, ''),
+      ...utms,
+    };
+
+    msgErro.style.display = 'none';
+    msgOk.style.display   = 'none';
+
+    if (!valida(dados)) {
+      msgErro.style.display = 'block';
+      return;
+    }
+
+    btnSubmit.disabled    = true;
+    btnSubmit.textContent = 'Enviando...';
+
+    try {
+      await fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method:  'POST',
+        mode:    'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ ...dados, idempotency_key: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) }),
+      });
+      window.location.href = CONFIG.REDIRECT_URL;
+    } catch (err) {
+      msgOk.style.display   = 'block';
+      btnSubmit.disabled    = false;
+      btnSubmit.textContent = 'Quero Conhecer a Workin';
+    }
+  });
+</script>
+
+</body>
+</html>

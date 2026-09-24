@@ -392,6 +392,25 @@
       .form-row { grid-template-columns: 1fr; }
       .hero h1 { font-size: 1.5rem; }
     }
+    /* ─── BOTÃO WHATSAPP (lead pelo WhatsApp do Comercial → CRM Workin) ─── */
+    .wpp-flutuante {
+      position: fixed; right: 20px; bottom: 20px; z-index: 999;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #25D366; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .wpp-flutuante:hover { transform: scale(1.07); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+    .wpp-flutuante svg { width: 32px; height: 32px; fill: #fff; }
+    .form-whatsapp { text-align: center; margin-top: 18px; font-size: 0.95rem; color: var(--cinza-texto); }
+    .form-whatsapp a { color: #128C7E; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .form-whatsapp a:hover { text-decoration: underline; }
+    .wpp-oculto { display: none !important; }
+    @media (max-width: 480px) {
+      .wpp-flutuante { right: 14px; bottom: 14px; width: 54px; height: 54px; }
+      .wpp-flutuante svg { width: 28px; height: 28px; }
+    }
   </style>
 </head>
 <body>
@@ -534,6 +553,7 @@
         <p class="form-legal">Seus dados estão seguros. Não enviamos spam.</p>
       </form>
     </div>
+    <p class="form-whatsapp wpp-oculto" id="form-whatsapp">Prefere falar direto? <a href="https://wa.me/" class="js-whatsapp" target="_blank" rel="noopener">Chame no WhatsApp →</a></p>
   </div>
 </section>
 
@@ -591,6 +611,7 @@
     <p><a href="{{URL_POLITICA_PRIVACIDADE}}">Política de Privacidade</a> · <a href="{{URL_SITE}}">sistemaworkin.com.br</a></p>
   </div>
 </footer>
+<a href="https://wa.me/" class="wpp-flutuante wpp-oculto js-whatsapp" id="wpp-flutuante" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.04 3C9.4 3 4 8.4 4 15.04c0 2.12.55 4.19 1.6 6.02L4 29l8.13-1.57a12 12 0 0 0 3.9.66h.01C22.68 28.1 28 22.7 28 16.06 28 9.4 22.68 3 16.04 3zm0 22.9h-.01a9.9 9.9 0 0 1-5.05-1.38l-.36-.22-4.83.93.96-4.7-.24-.38a9.88 9.88 0 0 1-1.52-5.1c0-5.47 4.46-9.92 9.94-9.92 5.47 0 9.93 4.45 9.93 9.93 0 5.47-4.46 10.84-8.82 10.84zm5.44-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35z"/></svg></a>
 
 <script>
   /* ─── CONFIGURAÇÃO — alterar por LP ─── */
@@ -598,6 +619,10 @@
     WEBHOOK_URL: '{{WEBHOOK_URL}}',           // OPCIONAL — URL gerada no WeSales; deixe o placeholder se esta LP não deve mais ir pro WeSales
     REDIRECT_URL: '{{REDIRECT_URL}}',         // ex: /obrigado-locacao.html
     UTM_CAMPAIGN_DEFAULT: '{{UTM_CAMPAIGN}}', // ex: locacao-equipamentos
+    // Botão de WhatsApp: número do canal Comercial + prefixo cadastrado na LP no CRM (/landing-pages).
+    WHATSAPP_NUMERO: '5567992811252',
+    WHATSAPP_CODIGO_LP: '{{WHATSAPP_CODIGO_LP}}',
+    WHATSAPP_MENSAGEM: 'Olá! Vim pela página do {{WHATSAPP_NOME_PRODUTO}} e quero saber mais.',
     PROPOSAL_HUB_URL: '{{PROPOSAL_HUB_URL}}', // gerada em crm.workin.com.br/landing-pages (cadastrar a LP lá e colar o snippet exibido)
   };
 
@@ -611,6 +636,56 @@
       utm_content:  params.get('utm_content')  || '',
       utm_term:     params.get('utm_term')     || '',
     };
+  }
+
+  /* ─── WHATSAPP → CRM Workin ───
+     O clique gera um código (prefixo da LP + 5 caracteres) que vai na mensagem. O CRM reconhece o
+     código quando a mensagem chega no Comercial e cria o lead/Card como o formulário. O registro do
+     clique (com as UTMs) é fire-and-forget: se falhar, o prefixo ainda identifica a LP. */
+  function whatsappConfigurado() {
+    return CONFIG.WHATSAPP_NUMERO && CONFIG.WHATSAPP_CODIGO_LP && CONFIG.WHATSAPP_CODIGO_LP.indexOf('{{') !== 0;
+  }
+
+  function geraCodigoClique() {
+    const alfabeto = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    const bytes = new Uint8Array(5);
+    if (window.crypto && crypto.getRandomValues) {
+      crypto.getRandomValues(bytes);
+    } else {
+      for (let i = 0; i < 5; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    return Array.from(bytes, function (b) { return alfabeto[b % alfabeto.length]; }).join('');
+  }
+
+  function abrirWhatsapp(e) {
+    e.preventDefault();
+
+    const codigo = geraCodigoClique();
+    const texto  = CONFIG.WHATSAPP_MENSAGEM + ' (cód. ' + CONFIG.WHATSAPP_CODIGO_LP + '-' + codigo + ')';
+    const url    = 'https://wa.me/' + CONFIG.WHATSAPP_NUMERO + '?text=' + encodeURIComponent(texto);
+
+    if (CONFIG.PROPOSAL_HUB_URL && CONFIG.PROPOSAL_HUB_URL.indexOf('{{') !== 0) {
+      fetch(CONFIG.PROPOSAL_HUB_URL.replace(/\/lead$/, '/clique-whatsapp'), {
+        method: 'POST',
+        mode: 'cors',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo: codigo, ...capturaUTMs() }),
+      }).catch(function () { /* silencioso — o WhatsApp abre de qualquer jeito */ });
+    }
+
+    // Mesmo gesto do usuário: não cai no bloqueador de pop-up. Se ainda assim bloquear, navega.
+    // (sem o recurso 'noopener' no window.open: com ele o retorno é sempre null.)
+    const janela = window.open(url, '_blank');
+    if (janela) { janela.opener = null; } else { window.location.href = url; }
+  }
+
+  if (whatsappConfigurado()) {
+    document.querySelectorAll('.js-whatsapp').forEach(function (el) {
+      el.href = 'https://wa.me/' + CONFIG.WHATSAPP_NUMERO;
+      el.addEventListener('click', abrirWhatsapp);
+      (el.closest('.wpp-oculto') || el).classList.remove('wpp-oculto');
+    });
   }
 
   /* ─── MÁSCARA DE TELEFONE ─── */

@@ -853,9 +853,35 @@
   "use strict";
 
   var CONFIG = {
-    WEBHOOK_URL: 'https://services.leadconnectorhq.com/hooks/OOQ8MYkXPEJqbh0mej19/webhook-trigger/3v6gUHSr7deWDQzoKDDI',
     UTM_CAMPAIGN_DEFAULT: 'calculadora-simples-ibs-cbs',
+    // Único destino do lead: LP "Calculadora Simples IBS/CBS" cadastrada em crm.workin.com.br/landing-pages (WPC-692).
+    PROPOSAL_HUB_URL: 'https://crm.workin.com.br/api/landpages/JrraTfGD2uM8j8l7PMczV3MWteYcX2SIRa8EUWyMyqgxVK9E/lead',
   };
+
+  /* Envio ao CRM Workin: a confirmação só aparece depois que o CRM recebe o lead (WPC-687/WPC-692).
+     A mesma chave vale para todas as tentativas desta visita, então reenviar depois de erro não duplica. */
+  var CHAVE_ENVIO_LEAD = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+  var MSG_ERRO_PADRAO = document.getElementById('msg-erro').textContent;
+  var MSG_FALHA_ENVIO = 'Não conseguimos enviar agora. Tente de novo em instantes.';
+
+  async function enviarAoCRM(dados) {
+    var controle = window.AbortController ? new AbortController() : null;
+    var limite = controle ? setTimeout(function () { controle.abort(); }, 15000) : null;
+    try {
+      var resposta = await fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method:  'POST',
+        mode:    'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(Object.assign({}, dados, { idempotency_key: CHAVE_ENVIO_LEAD })),
+        signal:  controle ? controle.signal : undefined,
+      });
+      if (!resposta.ok) throw new Error('CRM respondeu HTTP ' + resposta.status);
+    } finally {
+      if (limite) clearTimeout(limite);
+    }
+  }
 
   function capturaUTMs() {
     var params = new URLSearchParams(window.location.search);
@@ -882,6 +908,7 @@
     formWrap.hidden = false;
     sucessoWrap.hidden = true;
     form.reset();
+    document.getElementById('msg-erro').textContent = MSG_ERRO_PADRAO;
     document.getElementById('msg-erro').classList.remove('show');
   }
   function fecharModal() { overlay.classList.remove('open'); }
@@ -923,14 +950,20 @@
       origem:    'calculadora-simples-ibs-cbs',
       ...utms,
     };
+    msgErro.textContent = MSG_ERRO_PADRAO;
     msgErro.classList.remove('show');
     if (!valida(dados)) { msgErro.classList.add('show'); return; }
     btnSubmit.disabled = true;
     btnSubmit.textContent = 'Enviando...';
     try {
-      await fetch(CONFIG.WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+      await enviarAoCRM(dados);
     } catch (err) {
-      // segue para a confirmação mesmo em caso de falha de rede — mesmo padrão das LPs Workin
+      // Sem confirmação: o lead não chegou ao CRM, a pessoa precisa saber e tentar de novo.
+      msgErro.textContent = MSG_FALHA_ENVIO;
+      msgErro.classList.add('show');
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Quero saber mais →';
+      return;
     }
     formWrap.hidden = true;
     sucessoWrap.hidden = false;

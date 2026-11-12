@@ -797,7 +797,7 @@
     WHATSAPP_NUMERO: '5567992811252',
     WHATSAPP_CODIGO_LP: 'SIS',
     WHATSAPP_MENSAGEM: 'Olá! Vim pela página do Sistema Workin e quero saber mais.',
-    PROPOSAL_HUB_URL: 'https://crm.workin.com.br/api/landpages/NSiPf8IkCi86mGzIRMrM6KS74k4TL2ougq8rjpWZi7ACJseA/lead', // único destino do lead — esta LP não usa WeSales
+    PROPOSAL_HUB_URL: 'https://crm.workin.com.br/api/landpages/NSiPf8IkCi86mGzIRMrM6KS74k4TL2ougq8rjpWZi7ACJseA/lead', // único destino do lead
   };
 
   /* ─── CAPTURA UTMs da URL ─── */
@@ -883,6 +883,34 @@
     return true;
   }
 
+  /* ─── ENVIO DO LEAD AO CRM WORKIN (único destino) ───
+     A página espera a resposta do CRM antes de ir para a página de obrigado: a troca de página
+     cancelava o envio e o lead se perdia (WPC-687, 05/11/2026). A validação vem antes de qualquer
+     envio. A mesma chave de idempotência vale para todas as tentativas desta visita, então um reenvio
+     depois de erro de rede não duplica o lead no CRM. */
+  const CHAVE_ENVIO_LEAD = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+  const MSG_ERRO_PADRAO = document.getElementById('msg-erro').textContent;
+  const MSG_FALHA_ENVIO = 'Não conseguimos enviar agora. Tente de novo em instantes ou fale com a gente pelo WhatsApp.';
+
+  async function enviarAoCRM(dados) {
+    const controle = window.AbortController ? new AbortController() : null;
+    const limite = controle ? setTimeout(function () { controle.abort(); }, 15000) : null;
+    try {
+      const resposta = await fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method:  'POST',
+        mode:    'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ ...dados, idempotency_key: CHAVE_ENVIO_LEAD }),
+        signal:  controle ? controle.signal : undefined,
+      });
+      if (!resposta.ok) throw new Error('CRM respondeu HTTP ' + resposta.status);
+    } finally {
+      if (limite) clearTimeout(limite);
+    }
+  }
+
   /* ─── ENVIO ─── */
   document.getElementById('lead-form').addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -900,6 +928,7 @@
       ...utms,
     };
 
+    msgErro.textContent   = MSG_ERRO_PADRAO;
     msgErro.style.display = 'none';
     msgOk.style.display   = 'none';
 
@@ -912,15 +941,11 @@
     btnSubmit.textContent = 'Enviando...';
 
     try {
-      await fetch(CONFIG.PROPOSAL_HUB_URL, {
-        method:  'POST',
-        mode:    'cors',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ ...dados, idempotency_key: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) }),
-      });
+      await enviarAoCRM(dados);
       window.location.href = CONFIG.REDIRECT_URL;
     } catch (err) {
-      msgOk.style.display   = 'block';
+      msgErro.textContent   = MSG_FALHA_ENVIO;
+      msgErro.style.display = 'block';
       btnSubmit.disabled    = false;
       btnSubmit.textContent = 'Quero Conhecer a Workin';
     }

@@ -617,14 +617,13 @@
 <script>
   /* ─── CONFIGURAÇÃO — alterar por LP ─── */
   const CONFIG = {
-    WEBHOOK_URL: '{{WEBHOOK_URL}}',           // OPCIONAL — URL gerada no WeSales; deixe o placeholder se esta LP não deve mais ir pro WeSales
     REDIRECT_URL: '{{REDIRECT_URL}}',         // ex: /obrigado-locacao.html
     UTM_CAMPAIGN_DEFAULT: '{{UTM_CAMPAIGN}}', // ex: locacao-equipamentos
     // Botão de WhatsApp: número do canal Comercial + prefixo cadastrado na LP no CRM (/landing-pages).
     WHATSAPP_NUMERO: '5567992811252',
     WHATSAPP_CODIGO_LP: '{{WHATSAPP_CODIGO_LP}}',
     WHATSAPP_MENSAGEM: 'Olá! Vim pela página do {{WHATSAPP_NOME_PRODUTO}} e quero saber mais.',
-    PROPOSAL_HUB_URL: '{{PROPOSAL_HUB_URL}}', // gerada em crm.workin.com.br/landing-pages (cadastrar a LP lá e colar o snippet exibido)
+    PROPOSAL_HUB_URL: '{{PROPOSAL_HUB_URL}}', // OBRIGATÓRIO — único destino do lead; gerada em crm.workin.com.br/landing-pages (cadastrar a LP lá e colar o snippet exibido)
   };
 
   /* ─── CAPTURA UTMs da URL ─── */
@@ -706,11 +705,6 @@
     return v.replace(/\D/g, '');
   }
 
-  /* ─── Um destino (WEBHOOK_URL/PROPOSAL_HUB_URL) só está "ligado" se o placeholder {{...}} foi substituído ─── */
-  function destinoConfigurado(url) {
-    return !!url && url.indexOf('{{') !== 0;
-  }
-
   /* ─── VALIDAÇÃO SIMPLES ─── */
   function valida(dados) {
     if (!dados.firstName.trim()) return false;
@@ -718,6 +712,34 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return false;
     if (dados.phone.length < 10) return false;
     return true;
+  }
+
+  /* ─── ENVIO DO LEAD AO CRM WORKIN (único destino) ───
+     A página espera a resposta do CRM antes de ir para a página de obrigado: a troca de página
+     cancelava o envio e o lead se perdia (WPC-687, 05/11/2026). A validação vem antes de qualquer
+     envio. A mesma chave de idempotência vale para todas as tentativas desta visita, então um reenvio
+     depois de erro de rede não duplica o lead no CRM. */
+  const CHAVE_ENVIO_LEAD = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+  const MSG_ERRO_PADRAO = document.getElementById('msg-erro').textContent;
+  const MSG_FALHA_ENVIO = 'Não conseguimos enviar agora. Tente de novo em instantes ou fale com a gente pelo WhatsApp.';
+
+  async function enviarAoCRM(dados) {
+    const controle = window.AbortController ? new AbortController() : null;
+    const limite = controle ? setTimeout(function () { controle.abort(); }, 15000) : null;
+    try {
+      const resposta = await fetch(CONFIG.PROPOSAL_HUB_URL, {
+        method:  'POST',
+        mode:    'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ ...dados, idempotency_key: CHAVE_ENVIO_LEAD }),
+        signal:  controle ? controle.signal : undefined,
+      });
+      if (!resposta.ok) throw new Error('CRM respondeu HTTP ' + resposta.status);
+    } finally {
+      if (limite) clearTimeout(limite);
+    }
   }
 
   /* ─── ENVIO DO FORMULÁRIO ─── */
@@ -737,23 +759,7 @@
       ...utms,
     };
 
-    const enviaWeSales     = destinoConfigurado(CONFIG.WEBHOOK_URL);
-    const enviaProposalHub = destinoConfigurado(CONFIG.PROPOSAL_HUB_URL);
-
-    // ── Proposal Hub (CRM Workin) — disparado já aqui. Se o WeSales também estiver configurado, roda em
-    // paralelo e nunca bloqueia nem depende dele (o await no WeSales logo abaixo já dá tempo dele terminar).
-    // Se for o ÚNICO destino (WeSales não configurado nesta LP), é aguardado mais abaixo antes do redirect —
-    // sem isso, a navegação pode cancelar o fetch no meio do caminho.
-    var promiseProposalHub = null;
-    if (enviaProposalHub) {
-      promiseProposalHub = fetch(CONFIG.PROPOSAL_HUB_URL, {
-        method: 'POST',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...dados, idempotency_key: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) }),
-      }).catch(function () { /* silencioso — nunca deve impedir o redirect da LP */ });
-    }
-
+    msgErro.textContent   = MSG_ERRO_PADRAO;
     msgErro.style.display = 'none';
     msgOk.style.display   = 'none';
 
@@ -766,21 +772,13 @@
     btnSubmit.textContent = 'Enviando...';
 
     try {
-      if (enviaWeSales) {
-        await fetch(CONFIG.WEBHOOK_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(dados),
-        });
-      } else if (promiseProposalHub) {
-        await promiseProposalHub;
-      }
-      // Redireciona independente do status HTTP (GHL sempre retorna 200; erro do Proposal Hub já foi
-      // engolido acima e fica registrado só do lado de lá, não deve travar a experiência da LP)
+      await enviarAoCRM(dados);
       window.location.href = CONFIG.REDIRECT_URL;
     } catch (err) {
-      // Fallback: mostra mensagem de sucesso se o redirect falhar (só chega aqui se enviaWeSales e ele falhar)
-      msgOk.style.display   = 'block';
+      // CRM fora do ar, recusou ou demorou mais de 15 s: fica na página com o aviso, sem página de
+      // obrigado — senão a conversão do anúncio conta um lead que não chegou ao CRM.
+      msgErro.textContent   = MSG_FALHA_ENVIO;
+      msgErro.style.display = 'block';
       btnSubmit.disabled    = false;
       btnSubmit.textContent = '{{CTA_FORMULARIO}}';
     }
